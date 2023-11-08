@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Electron Home Page</title>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+  </head>
+  <body>
+    <div class="button-grid">
+      <button id="moshtryat">المشتريات</button>
+      <button id="mardod-moshtryat">مردود المشتريات</button>
+      <button id="mabe3at">مبيعات</button>
+      <button id="mardod-mabe3at">مردود مبيعات</button>
+      <button id="kashf-7sab">كشف حساب</button>
+      <button id="kart-elsanf">كرت الصنف</button>
+    </div>
+    <script>
+      const { ipcRenderer } = require("electron");
+
+      // Function to navigate to a specific page when a button is clicked.
+      const navigateToPage = (page) => {
+        ipcRenderer.send("navigate", page);
+      };
+
+      // Add click event listeners for each button.
+      document.getElementById("moshtryat").addEventListener("click", () => {
+        navigateToPage("moshtryat");
+      });
+
+      document
+        .getElementById("mardod-moshtryat")
+        .addEventListener("click", () => {
+          navigateToPage("mardod-moshtryat");
+        });
+      document.getElementById("mabe3at").addEventListener("click", () => {
+        navigateToPage("mabe3at");
+      });
+
+      document
+        .getElementById("mardod-mabe3at")
+        .addEventListener("click", () => {
+          navigateToPage("mardod-mabe3at");
+        });
+      document.getElementById("kashf-7sab").addEventListener("click", () => {
+        navigateToPage("kashf-7sab");
+      });
+      document.getElementById("kart-elsanf").addEventListener("click", () => {
+        navigateToPage("kart-elsanf");
+      });
+    </script>
+  </body>
+</html>

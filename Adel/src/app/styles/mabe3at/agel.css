@@ -1,0 +1,37 @@
+#backButton {
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+  }
+
+  /* CSS for button hover effect (optional) */
+  #backButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }
+
+  /* CSS for the big buttons */
+  .button-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid with 200px min width */
+    grid-gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* CSS for the big buttons */
+  .big-button {
+    background-color: rgb(19, 158, 205);
+    color: white;
+    padding: 20px 40px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .big-button:hover {
+    background-color: blue;
+  }

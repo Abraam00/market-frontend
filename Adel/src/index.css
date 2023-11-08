@@ -1,0 +1,27 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+}
+
+button {
+  width: 100px;
+  height: 70px;
+  background-color: #3498db;
+  color: white;
+  font-size: x-large;
+  border: 2px;
+  cursor: pointer;
+}
+
+button:hover{
+  background-color: blue;
+}
