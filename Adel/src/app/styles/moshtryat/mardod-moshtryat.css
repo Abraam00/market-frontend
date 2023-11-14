@@ -16,26 +16,32 @@
 }
 
 
+  /* CSS for the big buttons */
+  .button-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid with 200px min width */
+    grid-gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* CSS for the big buttons */
   .big-button {
     background-color: rgb(19, 158, 205);
     color: white;
     padding: 20px 40px;
     border: none;
     cursor: pointer;
-    margin: 10px;
-    font-size: x-large;
-    
+    font-size: 18px;
   }
-
+  
   .big-button:hover {
     background-color: blue;
   }
-  
-  .body{
-    display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-  }
+  #searchInput{
+    width: 300px;
+    height: 40px;
+    margin-left: 20%;
+    }
+    

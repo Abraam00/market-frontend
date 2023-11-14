@@ -1,6 +1,7 @@
 document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
+const { ipcRenderer } = require("electron");
 
 // Function to get the query parameter from the URL
 function getQueryParam(name) {
@@ -50,7 +51,7 @@ data.forEach((item) => {
   const row = tbody.insertRow();
 
   const cellName = row.insertCell(0);
-  cellName.textContent = item.count * item.price;
+  cellName.textContent = -(item.count * item.price);
   total += item.count * item.price;
 
   const cellCount = row.insertCell(1);
@@ -67,4 +68,4 @@ data.forEach((item) => {
 });
 
 const totalPrice = document.getElementById("total");
-totalPrice.textContent = "Total: " + total;
+totalPrice.textContent = "Total: - " + total;

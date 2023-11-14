@@ -25,10 +25,12 @@ const createWindow = () => {
   ipcMain.on("navigate", (event, page) => {
     // Handle navigation based on the button clicked.
     if (page === "moshtryat") {
-      mainWindow.loadFile(path.join(__dirname, "./app/pages/moshtryat.html"));
+      mainWindow.loadFile(
+        path.join(__dirname, "./app/pages/moshtryat/moshtryat.html")
+      );
     } else if (page === "mardod-moshtryat") {
       mainWindow.loadFile(
-        path.join(__dirname, "./app/pages/mardod-moshtryat.html")
+        path.join(__dirname, "./app/pages/moshtryat/mardod-moshtryat.html")
       );
     } else if (page === "mabe3at") {
       mainWindow.loadFile(
@@ -36,7 +38,7 @@ const createWindow = () => {
       );
     } else if (page === "mardod-mabe3at") {
       mainWindow.loadFile(
-        path.join(__dirname, "./app/pages/mardod-mabe3at.html")
+        path.join(__dirname, "./app/pages/mardod-mabe3at/mardod-mabe3at.html")
       );
     } else if (page === "kashf-7sab") {
       mainWindow.loadFile(path.join(__dirname, "./app/pages/kashf-7sab.html"));

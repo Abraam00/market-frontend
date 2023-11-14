@@ -2,16 +2,8 @@ document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
 
-// Function to get the query parameter from the URL
-function getQueryParam(name) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(name);
-}
-
-// Get the name query parameter from the URL
-const name = getQueryParam("name");
 const nameHeader = document.getElementById("nameHeader");
-nameHeader.textContent = "اسم العميل: " + name;
+nameHeader.textContent = "اسم العامل: " + "جلجل";
 
 const item1 = {
   name: "لبان",
@@ -50,7 +42,7 @@ data.forEach((item) => {
   const row = tbody.insertRow();
 
   const cellName = row.insertCell(0);
-  cellName.textContent = item.count * item.price;
+  cellName.textContent = -(item.count * item.price);
   total += item.count * item.price;
 
   const cellCount = row.insertCell(1);
@@ -67,4 +59,16 @@ data.forEach((item) => {
 });
 
 const totalPrice = document.getElementById("total");
-totalPrice.textContent = "Total: " + total;
+totalPrice.textContent = "Total: - " + total;
+
+const payButton = document.getElementById("payButton");
+
+payButton.addEventListener("click", () => {
+  console.log(total - parseInt(paidAmount.value));
+});
+
+const agelButton = document.getElementById("agelButton");
+
+agelButton.addEventListener("click", () => {
+  window.location.href = "agel.html";
+});

@@ -3,7 +3,7 @@ document.getElementById("backButton").addEventListener("click", () => {
 });
 
 // Simulated data from the backend, replace this with actual data received from your backend.
-const names = ["جلال", "جلال", "جلال", "جلال", "جلال", "جلال"];
+const names = ["اديتا", "اديتا", "اديتا", "اديتا", "اديتا", "اديتا"];
 
 // Get the button container element
 const buttonContainer = document.getElementById("buttonContainer");
@@ -16,7 +16,7 @@ names.forEach((name) => {
 
   button.addEventListener("click", () => {
     // Construct the URL with the name as a query parameter
-    const url = `client.html?name=${name}`;
+    const url = `company.html?name=${name}`;
     window.location.href = url;
   });
 

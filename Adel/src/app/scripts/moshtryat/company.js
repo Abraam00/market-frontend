@@ -11,7 +11,7 @@ function getQueryParam(name) {
 // Get the name query parameter from the URL
 const name = getQueryParam("name");
 const nameHeader = document.getElementById("nameHeader");
-nameHeader.textContent = "اسم العميل: " + name;
+nameHeader.textContent = "اسم الشركة: " + name;
 
 const item1 = {
   name: "لبان",
