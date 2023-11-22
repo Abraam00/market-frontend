@@ -41,7 +41,9 @@ const createWindow = () => {
         path.join(__dirname, "./app/pages/mardod-mabe3at/mardod-mabe3at.html")
       );
     } else if (page === "kashf-7sab") {
-      mainWindow.loadFile(path.join(__dirname, "./app/pages/kashf-7sab.html"));
+      mainWindow.loadFile(
+        path.join(__dirname, "./app/pages/kashf-7sab/kashf-7sab.html")
+      );
     } else if (page === "kart-elsanf") {
       mainWindow.loadFile(path.join(__dirname, "./app/pages/kart-elsanf.html"));
     }
