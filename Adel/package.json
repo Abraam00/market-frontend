@@ -18,7 +18,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "sequelize": "^6.35.1",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.4.2",
