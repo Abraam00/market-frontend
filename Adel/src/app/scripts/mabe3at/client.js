@@ -204,12 +204,11 @@ function updateCustomer(name, customerNumber, moneyRemaining) {
 }
 
 function createOrder(customerId, moneyPaid) {
-  console.log(GlobalState.orderItems);
   axios
     .post("https://localhost:7163/api/Order/CreateOrder", {
       customerId: customerId,
       orderItems: GlobalState.orderItems,
-      paymentType: "cash",
+      paymentType: "agel",
       moneyPaid: moneyPaid,
       orderNumber: generateRandomString(8),
     })

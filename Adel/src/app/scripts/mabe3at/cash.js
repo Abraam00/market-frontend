@@ -1,5 +1,9 @@
 const axios = require("axios");
 
+const GlobalState = {
+  orderItems: [],
+};
+
 //getting all product names on page load
 let productNames;
 axios
@@ -69,6 +73,16 @@ unitButton.addEventListener("click", () => {
   getProduct(productSearch.value);
 });
 
+function updateGlobal(item, unitOfSale) {
+  let orderItem = {
+    productId: item.productId,
+    quantity: parseInt(countInput.value),
+    unitType: unitOfSale.name,
+    salePrice: unitOfSale.salePrice,
+  };
+  GlobalState.orderItems.push(orderItem);
+}
+
 //getting the full product then populating the table using the populate table function based off of the selected unit
 function getProduct(query) {
   axios
@@ -86,15 +100,18 @@ function getProduct(query) {
             if (checkboxId === "واحدة" && unitOfSale.name === "individual") {
               match = true;
               populateTable(product, unitOfSale.salePrice);
+              updateGlobal(product, unitOfSale);
             } else if (checkboxId === "علبة" && unitOfSale.name === "box") {
               match = true;
               populateTable(product, unitOfSale.salePrice);
+              updateGlobal(product, unitOfSale);
             } else if (
               checkboxId === "كرتونة" &&
               unitOfSale.name === "bigBox"
             ) {
               match = true;
               populateTable(product, unitOfSale.salePrice);
+              updateGlobal(product, unitOfSale);
             }
           });
           if (!match) {
@@ -107,7 +124,6 @@ function getProduct(query) {
       console.error("Error making Axios request:", error);
     });
 }
-
 //having only one checkbox checked at a time
 const checkboxes = document.querySelectorAll('input[name="checkboxGroup"]');
 let checkboxId;
@@ -130,13 +146,10 @@ const countInput = document.getElementById("countInput");
 const payButton = document.getElementById("payButton");
 const paidAmount = document.getElementById("payInput");
 
-let customerId = 0;
-let moneyPaid = 0;
-let orderNumber = 0;
+let total = 0;
+let itemTotal = 0;
 //method to add the info to the table
 function populateTable(item, salePrice) {
-  let total = 0;
-  let itemTotal = 0;
   const row = tbody.insertRow();
   itemTotal = parseInt(countInput.value, 10) * salePrice;
 
@@ -164,6 +177,8 @@ payButton.addEventListener("click", () => {
     "money to give back: " +
       (parseInt(paidAmount.value) - parseInt(totalPrice.textContent))
   );
+
+  createOrder(parseInt(paidAmount.value));
   while (tbody.firstChild) {
     tbody.removeChild(tbody.firstChild);
   }
@@ -171,3 +186,36 @@ payButton.addEventListener("click", () => {
   productSearch.value = "";
   paidAmount.value = "";
 });
+
+function createOrder(moneyPaid) {
+  console.log(GlobalState.orderItems);
+  axios
+    .post("https://localhost:7163/api/Order/CreateOrder", {
+      customerId: null,
+      orderItems: GlobalState.orderItems,
+      paymentType: "cash",
+      moneyPaid: moneyPaid,
+      orderNumber: generateRandomString(8),
+    })
+    .then((response) => {
+      GlobalState.orderItems.length = 0;
+      // Handle success
+      console.log("Response:", response.data);
+    })
+    .catch((error) => {
+      // Handle error
+      console.error("Error:", error);
+    });
+}
+
+function generateRandomString(length) {
+  const characters = "123456789";
+  let randomString = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
+  }
+
+  return randomString;
+}
