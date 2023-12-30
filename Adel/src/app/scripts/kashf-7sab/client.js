@@ -1,59 +1,54 @@
+const axios = require("axios");
+
 document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
 
-const item1 = {
-  name: "لبان",
-  count: 5,
-  type: "علبة",
-  price: 30,
-};
-const item2 = {
-  name: "لبان",
-  count: 5,
-  type: "علبة",
-  price: 30,
-};
-const item3 = {
-  name: "لبان",
-  count: 5,
-  type: "علبة",
-  price: 30,
-};
-const item4 = {
-  name: "لبان",
-  count: 5,
-  type: "علبة",
-  price: 30,
-};
+// Function to get the query parameter from the URL
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
-const data = [item1, item2, item3, item4];
+const name = getQueryParam("name");
+const orderId = parseInt(getQueryParam("orderId"));
+const moneyRemaining = getQueryParam("moneyRemaining");
 const table = document.querySelector("table"); // Assuming you have a <table> element in your HTML
 const tbody = table.querySelector("tbody");
-let total = 0;
-
-while (tbody.firstChild) {
-  tbody.removeChild(tbody.firstChild);
-}
-data.forEach((item) => {
-  const row = tbody.insertRow();
-
-  const cellName = row.insertCell(0);
-  cellName.textContent = item.count * item.price;
-  total += item.count * item.price;
-
-  const cellCount = row.insertCell(1);
-  cellCount.textContent = item.price;
-
-  const cellType = row.insertCell(2);
-  cellType.textContent = item.type;
-
-  const cellPrice = row.insertCell(3);
-  cellPrice.textContent = item.count;
-
-  const cellTotal = row.insertCell(4);
-  cellTotal.textContent = item.name;
-});
-
 const totalPrice = document.getElementById("total");
-totalPrice.textContent = "Total: " + total;
+const madyonya = document.getElementById("moneyRemaining");
+madyonya.textContent = moneyRemaining;
+
+console.log(name + orderId);
+
+let orderItems;
+let order;
+axios
+  .get(`https://localhost:7163/api/Order/GetOrderById?orderId=${orderId}`)
+  .then((response) => {
+    order = response.data;
+    orderItems = response.data.orderItems;
+    orderItems.forEach((item) => {
+      const row = tbody.insertRow();
+
+      const cellTotal = row.insertCell(0);
+      cellTotal.textContent =
+        parseInt(item.quantity) * parseInt(item.unitPrice);
+
+      const cellCount = row.insertCell(1);
+      cellCount.textContent = item.quantity;
+
+      const cellType = row.insertCell(2);
+      cellType.textContent = item.unitType;
+
+      const cellPrice = row.insertCell(3);
+      cellPrice.textContent = item.unitPrice;
+
+      const cellName = row.insertCell(4);
+      cellName.textContent = item.productName;
+    });
+    totalPrice.textContent = "Total: " + order.total;
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
+  });

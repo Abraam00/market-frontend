@@ -31,7 +31,10 @@ const createWindow = () => {
       );
     } else if (page === "mardod-moshtryat") {
       mainWindow.loadFile(
-        path.join(__dirname, "./app/pages/moshtryat/mardod-moshtryat.html")
+        path.join(
+          __dirname,
+          "./app/pages/mardod-moshtryat/mardod-moshtryat.html"
+        )
       );
     } else if (page === "mabe3at") {
       mainWindow.loadFile(
@@ -46,7 +49,17 @@ const createWindow = () => {
         path.join(__dirname, "./app/pages/kashf-7sab/kashf-7sab.html")
       );
     } else if (page === "kart-elsanf") {
-      mainWindow.loadFile(path.join(__dirname, "./app/pages/kart-elsanf.html"));
+      mainWindow.loadFile(
+        path.join(__dirname, "./app/pages/other/kart-elsanf.html")
+      );
+    } else if (page === "edafet-3ameel") {
+      mainWindow.loadFile(
+        path.join(__dirname, "./app/pages/other/edafet-3ameel.html")
+      );
+    } else if (page === "edafet-sherka") {
+      mainWindow.loadFile(
+        path.join(__dirname, "./app/pages/other/edafet-sherka.html")
+      );
     }
   });
 };

@@ -26,6 +26,7 @@ const companyName = getQueryParam("name");
 const companyId = getQueryParam("companyId");
 const nameHeader = document.getElementById("nameHeader");
 nameHeader.textContent = "اسم الشركة: " + companyName;
+const orderIdInput = document.getElementById("orderIdInput");
 
 const productSearch = document.getElementById("searchInput");
 productSearch.addEventListener("input", updateDropdown);
@@ -125,12 +126,11 @@ function populateTable(item, unitPrice) {
 
 function updateGlobal(item, unitOfSale) {
   let orderItem = {
-    serialNumber: item.serialNumber,
-    name: item.name,
-    unitOfSaleName: unitOfSale.name,
-    unitPrice: unitOfSale.unitPrice,
-    salePrice: unitOfSale.salePrice,
+    productId: item.productId,
+    productName: item.name,
     quantity: parseInt(countInput.value),
+    unitPrice: unitOfSale.unitPrice,
+    unitType: unitOfSale.name,
   };
   GlobalState.orderItems.push(orderItem);
 }
@@ -177,13 +177,13 @@ function getProduct(query) {
     });
 }
 
-function createPurchase(companyId) {
+function returnPurchase(purchaseId) {
   console.log(GlobalState.orderItems);
   axios
-    .post("https://localhost:7163/api/Purchase/CreatePurchase", {
-      companyId: companyId,
-      purchaseItems: GlobalState.orderItems,
-    })
+    .put(
+      `https://localhost:7163/api/Purchase/ReturnPurchaseItems/?purchaseId=${purchaseId}`,
+      GlobalState.orderItems
+    )
     .then((response) => {
       GlobalState.orderItems.length = 0;
       // Handle success
@@ -196,9 +196,7 @@ function createPurchase(companyId) {
 }
 
 payButton.addEventListener("click", () => {
-  console.log(companyId);
-
-  createPurchase(parseInt(companyId));
+  returnPurchase(parseInt(orderIdInput.value));
 
   while (tbody.firstChild) {
     tbody.removeChild(tbody.firstChild);
@@ -206,4 +204,5 @@ payButton.addEventListener("click", () => {
   totalPrice.textContent = "";
   productSearch.value = "";
   countInput.value = "1";
+  orderIdInput.value = "";
 });

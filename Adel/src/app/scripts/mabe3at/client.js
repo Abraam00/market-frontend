@@ -169,7 +169,10 @@ function getProduct(query) {
               match = true;
               populateTable(product, unitOfSale.salePrice);
               updateGlobal(product, unitOfSale);
-            } else if (checkboxId === "علبة" && unitOfSale.name === "box") {
+            } else if (
+              checkboxId === "علبة" &&
+              (unitOfSale.name === "Box" || unitOfSale.name === "box")
+            ) {
               match = true;
               populateTable(product, unitOfSale.salePrice);
               updateGlobal(product, unitOfSale);
@@ -204,6 +207,7 @@ function updateCustomer(name, customerNumber, moneyRemaining) {
 }
 
 function createOrder(customerId, moneyPaid) {
+  console.log(customerId + GlobalState.orderItems + moneyPaid);
   axios
     .post("https://localhost:7163/api/Order/CreateOrder", {
       customerId: customerId,

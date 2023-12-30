@@ -166,7 +166,10 @@ function getProduct(query) {
             if (checkboxId === "واحدة" && unitOfSale.name === "individual") {
               populateTable(product, unitOfSale.salePrice);
               updateGlobal(product, unitOfSale);
-            } else if (checkboxId === "علبة" && unitOfSale.name === "box") {
+            } else if (
+              checkboxId === "علبة" &&
+              (unitOfSale.name === "Box" || unitOfSale.name === "box")
+            ) {
               populateTable(product, unitOfSale.salePrice);
               updateGlobal(product, unitOfSale);
             } else if (

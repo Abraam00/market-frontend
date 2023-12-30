@@ -1,24 +1,60 @@
+const axios = require("axios");
+
 document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
-
-// Simulated data from the backend, replace this with actual data received from your backend.
-const dates = ["11/12/23", "10/2/23", "10/10/22", "1/3/22", "1/1/21", "2/3/21"];
-
 // Get the button container element
 const buttonContainer = document.getElementById("buttonContainer");
 
-// Create buttons dynamically based on the names
-dates.forEach((date) => {
-  const button = document.createElement("button");
-  button.className = "big-button";
-  button.textContent = date;
+// Function to get the query parameter from the URL
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
-  button.addEventListener("click", () => {
-    // Construct the URL with the name as a query parameter
-    const url = `client.html?name=${name + ": " + date}`;
-    window.location.href = url;
+// // Get the name query parameter from the URL
+// const name = getQueryParam("name");
+let orders;
+let customer;
+axios
+  .get(
+    `https://localhost:7163/api/Customer/GetCustomer/?name=${getQueryParam(
+      "name"
+    )}`
+  )
+  .then((response) => {
+    customer = response.data;
+    orders = response.data.orders;
+    // Create buttons dynamically based on the names
+    orders.forEach((order) => {
+      const button = document.createElement("button");
+      button.className = "big-button";
+      button.textContent = formatDate(order.orderDate);
+
+      button.addEventListener("click", () => {
+        // Construct the URL with the name as a query parameter
+        const url = `client.html?name=${encodeURIComponent(
+          customer.name
+        )}&orderId=${encodeURIComponent(
+          order.orderId
+        )}&moneyRemaining=${encodeURIComponent(customer.moneyRemaining)}`;
+
+        window.location.href = url;
+      });
+
+      buttonContainer.appendChild(button);
+    });
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
   });
 
-  buttonContainer.appendChild(button);
-});
+function formatDate(inputDate) {
+  const dateObject = new Date(inputDate);
+
+  const day = String(dateObject.getDate()).padStart(2, "0");
+  const month = String(dateObject.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const year = dateObject.getFullYear();
+
+  return day + "/" + month + "/" + year;
+}
