@@ -1,0 +1,48 @@
+#backButton {
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+  }
+  
+  /* CSS for button hover effect (optional) */
+  #backButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }  
+  
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+#endDate{
+    margin-right: 20px;
+    height: 40px;
+}
+#startDate{
+    margin-right: 20px;
+    height: 40px;
+}
+
+
+#submitButton{
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+    margin-left: 45% ;
+  }
+  #submitButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }

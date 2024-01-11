@@ -254,3 +254,60 @@ function returnOrder(orderId) {
       });
   }
 }
+
+// Initialize a variable to store the scanned barcode
+let scannedBarcode = "";
+
+document.addEventListener("keydown", (event) => {
+  // Check if the key pressed is a valid barcode character
+  if (event.key.length === 1) {
+    // Concatenate the scanned digit to the barcode string
+    scannedBarcode += event.key;
+  } else if (event.key === "Enter") {
+    console.log("j");
+    axios
+      .get(
+        `https://localhost:7163/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
+      )
+      .then((response) => {
+        const product = response.data;
+        const unitsOfSale = product.unitsOfSale;
+
+        checkboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            checkboxId = checkbox.id;
+            let match = false;
+            // Add your logic here based on checkboxId and unitsOfSale
+            unitsOfSale.forEach((unitOfSale) => {
+              if (checkboxId === "واحدة" && unitOfSale.name === "individual") {
+                match = true;
+                populateTable(product, unitOfSale.salePrice);
+                updateGlobal(product, unitOfSale);
+              } else if (
+                checkboxId === "علبة" &&
+                (unitOfSale.name === "Box" || unitOfSale.name === "box")
+              ) {
+                match = true;
+                populateTable(product, unitOfSale.salePrice);
+                updateGlobal(product, unitOfSale);
+              } else if (
+                checkboxId === "كرتونة" &&
+                unitOfSale.name === "bigBox"
+              ) {
+                match = true;
+                populateTable(product, unitOfSale.salePrice);
+                updateGlobal(product, unitOfSale);
+              }
+            });
+            if (!match) {
+              alert("we're out of " + product.name);
+            }
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error making Axios request:", error);
+      });
+    scannedBarcode = "";
+  }
+});

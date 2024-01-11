@@ -66,9 +66,8 @@
     background-color: blue; /* Darker blue background color on hover */
   }
   
-  #searchInput{
-    width: 300px;
+  #search{
+    margin-left: 25%;
     height: 40px;
-    margin-left: 20%;
+    width: 200px;
   }
-    

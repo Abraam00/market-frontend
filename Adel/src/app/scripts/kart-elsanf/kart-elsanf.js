@@ -7,47 +7,43 @@ document.getElementById("backButton").addEventListener("click", () => {
 // Get the button container element
 const buttonContainer = document.getElementById("buttonContainer");
 
-let companies;
+let products;
 axios
-  .get("https://localhost:7163/api/Company/GetCompanies")
+  .get("https://localhost:7163/api/Product/GetAllProducts")
   .then((response) => {
-    companies = response.data;
+    products = response.data;
     // Create buttons dynamically based on the names
-    renderButtons(companies);
+    renderButtons(products);
 
     // Add event listener to search input
     const searchInput = document.getElementById("search");
     searchInput.addEventListener("input", () => {
       const searchTerm = searchInput.value.toLowerCase();
-      const filteredCompanies = companies.filter(
-        (company) =>
-          company.companyName.toLowerCase().includes(searchTerm) ||
-          company.companyNumber.toLowerCase().includes(searchTerm)
+      const filteredproducts = products.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm)
       );
-      renderButtons(filteredCompanies);
+      renderButtons(filteredproducts);
     });
   })
   .catch((error) => {
     console.error("Error fetching data:", error);
   });
 
-function renderButtons(companiesToRender) {
+function renderButtons(productsToRender) {
   // Clear existing buttons
   buttonContainer.innerHTML = "";
 
-  // Create buttons based on the provided companys
-  companiesToRender.forEach((company) => {
+  // Create buttons based on the provided products
+  productsToRender.forEach((product) => {
     const button = document.createElement("button");
     button.className = "big-button";
-    button.textContent = company.companyName + "-" + company.companyNumber;
+    button.textContent = product.name;
 
     button.addEventListener("click", () => {
       // Construct the URL with the name as a query parameter
-      const url = `company.html?name=${encodeURIComponent(
-        company.companyName
-      )}&companyId=${encodeURIComponent(
-        company.companyId
-      )}&companyNumber=${encodeURIComponent(company.companyNumber)}`;
+      const url = `date.html?name=${encodeURIComponent(
+        product.name
+      )}&productId=${encodeURIComponent(product.productId)}`;
 
       window.location.href = url;
     });

@@ -1,9 +1,7 @@
 const axios = require("axios");
-
 document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
-
 // Get the button container element
 const buttonContainer = document.getElementById("buttonContainer");
 
@@ -43,7 +41,7 @@ function renderButtons(companiesToRender) {
 
     button.addEventListener("click", () => {
       // Construct the URL with the name as a query parameter
-      const url = `company.html?name=${encodeURIComponent(
+      const url = `companyHistory.html?name=${encodeURIComponent(
         company.companyName
       )}&companyId=${encodeURIComponent(
         company.companyId

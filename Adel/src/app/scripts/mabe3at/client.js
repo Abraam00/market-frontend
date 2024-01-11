@@ -62,6 +62,7 @@ function updateDropdown() {
     li.textContent = item;
     li.addEventListener("click", () => {
       productSearch.value = item;
+      getProduct(item);
       dropdownList.style.display = "none";
     });
     dropdownList.appendChild(li);
@@ -89,112 +90,148 @@ const GlobalState = {
   orderItems: [],
 };
 
-const unitButton = document.getElementById("unitButton");
-unitButton.addEventListener("click", () => {
-  getProduct(productSearch.value);
-});
-
-//having only one checkbox checked at a time
-const checkboxes = document.querySelectorAll('input[name="checkboxGroup"]');
-let checkboxId;
-checkboxes.forEach((checkbox) => {
-  checkbox.addEventListener("click", function () {
-    checkboxes.forEach((otherCheckbox) => {
-      if (otherCheckbox !== checkbox) {
-        otherCheckbox.checked = false;
-      }
-      checkboxId = checkbox.id;
-    });
-  });
-});
-
 const table = document.querySelector("table");
 const tbody = table.querySelector("tbody");
 const totalPrice = document.getElementById("total");
-const countInput = document.getElementById("countInput");
 const payButton = document.getElementById("payButton");
 const paidAmount = document.getElementById("payInput");
 
-let total = 0;
-let itemTotal = 0;
-//method to add the info to the table
-function populateTable(item, salePrice) {
-  const row = tbody.insertRow();
-  itemTotal = parseInt(countInput.value, 10) * salePrice;
-
-  const cellTotal = row.insertCell(0);
-  cellTotal.textContent = itemTotal;
-
-  const cellCount = row.insertCell(1);
-  cellCount.textContent = countInput.value;
-
-  const cellType = row.insertCell(2);
-  cellType.textContent = checkboxId;
-
-  const cellPrice = row.insertCell(3);
-  cellPrice.textContent = salePrice;
-
-  const cellName = row.insertCell(4);
-  cellName.textContent = item.name;
-
-  total += itemTotal;
-  totalPrice.textContent = total;
-}
-
-function updateGlobal(item, unitOfSale) {
+function updateGlobal(item, unitOfSale, count) {
   let orderItem = {
     productId: item.productId,
-    quantity: parseInt(countInput.value),
+    quantity: parseInt(count),
     unitType: unitOfSale.name,
     salePrice: unitOfSale.salePrice,
   };
+
+  const index = GlobalState.orderItems.findIndex(
+    (existingItem) => existingItem.productId === orderItem.productId
+  );
+
+  if (index > -1) {
+    // Item with the same productId found, remove it
+    GlobalState.orderItems.splice(index, 1);
+  }
+
   GlobalState.orderItems.push(orderItem);
 }
 
+let itemTotal = 0;
+let total = 0;
 //getting the full product then populating the table using the populate table function based off of the selected unit
 function getProduct(query) {
   axios
     .get(`https://localhost:7163/api/Product/GetProductByName/${query}`)
     .then((response) => {
       const product = response.data;
-      const unitsOfSale = product.unitsOfSale;
+      const bigBoxUnit = product.unitsOfSale[0];
+      const boxUnit = product.unitsOfSale[1];
+      const individualUnit = product.unitsOfSale[2];
 
-      checkboxes.forEach((checkbox) => {
-        if (checkbox.checked) {
-          checkboxId = checkbox.id;
-          let match = false;
-          // Add your logic here based on checkboxId and unitsOfSale
-          unitsOfSale.forEach((unitOfSale) => {
-            if (checkboxId === "واحدة" && unitOfSale.name === "individual") {
-              match = true;
-              populateTable(product, unitOfSale.salePrice);
-              updateGlobal(product, unitOfSale);
-            } else if (
-              checkboxId === "علبة" &&
-              (unitOfSale.name === "Box" || unitOfSale.name === "box")
-            ) {
-              match = true;
-              populateTable(product, unitOfSale.salePrice);
-              updateGlobal(product, unitOfSale);
-            } else if (
-              checkboxId === "كرتونة" &&
-              unitOfSale.name === "bigBox"
-            ) {
-              match = true;
-              populateTable(product, unitOfSale.salePrice);
-              updateGlobal(product, unitOfSale);
-            }
-          });
-          if (!match) {
-            alert("we're out of " + product.name);
+      const row = tbody.insertRow();
+      var cellTotal = row.insertCell(0);
+
+      var cellCount = row.insertCell(1);
+      const countInput = document.createElement("input");
+      countInput.addEventListener("keyup", (event) => {
+        if (event.key === "Enter") {
+          cellTotal.textContent =
+            parseInt(countInput.value) * parseInt(cellPrice.textContent);
+          itemTotal = parseInt(cellTotal.textContent);
+          total += itemTotal;
+          totalPrice.textContent = total;
+          updateGlobal(product, bigBoxUnit, countInput.value);
+        }
+      });
+      cellCount.appendChild(countInput);
+
+      var cellPrice = row.insertCell(2);
+      cellPrice.textContent = bigBoxUnit.salePrice;
+
+      const cellType = row.insertCell(3);
+      const dropdown = document.createElement("select");
+
+      // Add options to the dropdown menu (replace 'optionValue' with your actual values)
+      const bigBox = document.createElement("option");
+      bigBox.value = "bigBox";
+      bigBox.textContent = "bigBox";
+      dropdown.appendChild(bigBox);
+
+      const box = document.createElement("option");
+      box.value = "box";
+      box.textContent = "box";
+      dropdown.appendChild(box);
+
+      const individual = document.createElement("option");
+      individual.value = "individual";
+      individual.textContent = "individual";
+      dropdown.appendChild(individual);
+
+      dropdown.addEventListener("change", () => {
+        const selectedValue = dropdown.value;
+
+        // Check the selected option and update cellPrice and cellTotal accordingly
+        if (
+          selectedValue === "bigBox" ||
+          parseInt(countInput.value) > bigBoxUnit.quantity
+        ) {
+          if (bigBoxUnit.quantity != 0) {
+            total -= itemTotal;
+            cellPrice.textContent = bigBoxUnit.salePrice;
+            cellTotal.textContent =
+              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+            itemTotal = parseInt(cellTotal.textContent);
+            total += itemTotal;
+            totalPrice.textContent = total;
+            updateGlobal(product, bigBoxUnit, countInput.value);
+          } else {
+            alert("we're out of bigBoxes of " + product.name);
+          }
+        } else if (
+          selectedValue === "box" ||
+          parseInt(countInput.value) > bigBoxUnit.quantity
+        ) {
+          if (boxUnit.quantity != 0) {
+            total -= itemTotal;
+            cellPrice.textContent = boxUnit.salePrice;
+            cellTotal.textContent =
+              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+            itemTotal = parseInt(cellTotal.textContent);
+            total += itemTotal;
+            totalPrice.textContent = total;
+            updateGlobal(product, boxUnit, countInput.value);
+          } else {
+            alert("we're out of boxes of " + product.name);
+          }
+        } else if (selectedValue === "individual") {
+          if (
+            individualUnit.quantity != 0 ||
+            parseInt(countInput.value) > individualUnit.quantity
+          ) {
+            total -= itemTotal;
+            cellPrice.textContent = individualUnit.salePrice;
+            cellTotal.textContent =
+              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+            itemTotal = parseInt(cellTotal.textContent);
+            total += itemTotal;
+            totalPrice.textContent = total;
+            updateGlobal(product, individualUnit, countInput.value);
+          } else {
+            alert("we're out of individual of " + product.name);
           }
         }
       });
+
+      cellType.appendChild(dropdown);
+
+      const cellName = row.insertCell(4);
+      cellName.textContent = product.name;
     })
     .catch((error) => {
       console.error("Error making Axios request:", error);
     });
 }
+
 function updateCustomer(name, customerNumber, moneyRemaining) {
   axios.put(
     `https://localhost:7163/api/Customer/UpdateCustomer/${customerId}`,
@@ -207,14 +244,13 @@ function updateCustomer(name, customerNumber, moneyRemaining) {
 }
 
 function createOrder(customerId, moneyPaid) {
-  console.log(customerId + GlobalState.orderItems + moneyPaid);
   axios
     .post("https://localhost:7163/api/Order/CreateOrder", {
       customerId: customerId,
       orderItems: GlobalState.orderItems,
       paymentType: "agel",
       moneyPaid: moneyPaid,
-      orderNumber: generateRandomString(8),
+      orderNumber: "",
     })
     .then((response) => {
       GlobalState.orderItems.length = 0;
@@ -250,16 +286,131 @@ payButton.addEventListener("click", () => {
   totalPrice.textContent = "";
   productSearch.value = "";
   paidAmount.value = "";
+  itemTotal = 0;
+  total = 0;
 });
 
-function generateRandomString(length) {
-  const characters = "123456789";
-  let randomString = "";
+// Initialize a variable to store the scanned barcode
+let scannedBarcode = "";
 
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    randomString += characters.charAt(randomIndex);
+document.addEventListener("keydown", (event) => {
+  // Check if the key pressed is a valid barcode character
+  if (event.key.length === 1) {
+    // Concatenate the scanned digit to the barcode string
+    scannedBarcode += event.key;
+  } else if (event.key === "Enter") {
+    axios
+      .get(
+        `https://localhost:7163/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
+      )
+      .then((response) => {
+        const product = response.data;
+        const bigBoxUnit = product.unitsOfSale[0];
+        const boxUnit = product.unitsOfSale[1];
+        const individualUnit = product.unitsOfSale[2];
+
+        const row = tbody.insertRow();
+        var cellTotal = row.insertCell(0);
+
+        var cellCount = row.insertCell(1);
+        const countInput = document.createElement("input");
+        countInput.addEventListener("keyup", (event) => {
+          if (event.key === "Enter") {
+            cellTotal.textContent =
+              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+            itemTotal = parseInt(cellTotal.textContent);
+            total += itemTotal;
+            totalPrice.textContent = total;
+            updateGlobal(product, bigBoxUnit, countInput.value);
+          }
+        });
+        cellCount.appendChild(countInput);
+
+        var cellPrice = row.insertCell(2);
+        cellPrice.textContent = bigBoxUnit.salePrice;
+
+        const cellType = row.insertCell(3);
+        const dropdown = document.createElement("select");
+
+        // Add options to the dropdown menu (replace 'optionValue' with your actual values)
+        const bigBox = document.createElement("option");
+        bigBox.value = "bigBox";
+        bigBox.textContent = "bigBox";
+        dropdown.appendChild(bigBox);
+
+        const box = document.createElement("option");
+        box.value = "box";
+        box.textContent = "box";
+        dropdown.appendChild(box);
+
+        const individual = document.createElement("option");
+        individual.value = "individual";
+        individual.textContent = "individual";
+        dropdown.appendChild(individual);
+
+        dropdown.addEventListener("change", () => {
+          const selectedValue = dropdown.value;
+
+          // Check the selected option and update cellPrice and cellTotal accordingly
+          if (
+            selectedValue === "bigBox" ||
+            parseInt(countInput.value) > bigBoxUnit.quantity
+          ) {
+            if (bigBoxUnit.quantity != 0) {
+              total -= itemTotal;
+              cellPrice.textContent = bigBoxUnit.salePrice;
+              cellTotal.textContent =
+                parseInt(countInput.value) * parseInt(cellPrice.textContent);
+              itemTotal = parseInt(cellTotal.textContent);
+              total += itemTotal;
+              totalPrice.textContent = total;
+              updateGlobal(product, bigBoxUnit, countInput.value);
+            } else {
+              alert("we're out of bigBoxes of " + product.name);
+            }
+          } else if (
+            selectedValue === "box" ||
+            parseInt(countInput.value) > bigBoxUnit.quantity
+          ) {
+            if (boxUnit.quantity != 0) {
+              total -= itemTotal;
+              cellPrice.textContent = boxUnit.salePrice;
+              cellTotal.textContent =
+                parseInt(countInput.value) * parseInt(cellPrice.textContent);
+              itemTotal = parseInt(cellTotal.textContent);
+              total += itemTotal;
+              totalPrice.textContent = total;
+              updateGlobal(product, boxUnit, countInput.value);
+            } else {
+              alert("we're out of boxes of " + product.name);
+            }
+          } else if (selectedValue === "individual") {
+            if (
+              individualUnit.quantity != 0 ||
+              parseInt(countInput.value) > individualUnit.quantity
+            ) {
+              total -= itemTotal;
+              cellPrice.textContent = individualUnit.salePrice;
+              cellTotal.textContent =
+                parseInt(countInput.value) * parseInt(cellPrice.textContent);
+              itemTotal = parseInt(cellTotal.textContent);
+              total += itemTotal;
+              totalPrice.textContent = total;
+              updateGlobal(product, individualUnit, countInput.value);
+            } else {
+              alert("we're out of individual of " + product.name);
+            }
+          }
+        });
+
+        cellType.appendChild(dropdown);
+
+        const cellName = row.insertCell(4);
+        cellName.textContent = product.name;
+      })
+      .catch((error) => {
+        console.error("Error making Axios request:", error);
+      });
+    scannedBarcode = "";
   }
-
-  return randomString;
-}
+});

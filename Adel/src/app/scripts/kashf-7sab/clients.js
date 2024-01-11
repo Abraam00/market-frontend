@@ -1,53 +1,52 @@
 const axios = require("axios");
-
 document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
-
 // Get the button container element
 const buttonContainer = document.getElementById("buttonContainer");
 
-let companies;
+let customers;
+
 axios
-  .get("https://localhost:7163/api/Company/GetCompanies")
+  .get("https://localhost:7163/api/Customer/GetAllCustomers")
   .then((response) => {
-    companies = response.data;
+    customers = response.data;
     // Create buttons dynamically based on the names
-    renderButtons(companies);
+    renderButtons(customers);
 
     // Add event listener to search input
     const searchInput = document.getElementById("search");
     searchInput.addEventListener("input", () => {
       const searchTerm = searchInput.value.toLowerCase();
-      const filteredCompanies = companies.filter(
-        (company) =>
-          company.companyName.toLowerCase().includes(searchTerm) ||
-          company.companyNumber.toLowerCase().includes(searchTerm)
+      const filteredCustomers = customers.filter(
+        (customer) =>
+          customer.name.toLowerCase().includes(searchTerm) ||
+          customer.customerNumber.toLowerCase().includes(searchTerm)
       );
-      renderButtons(filteredCompanies);
+      renderButtons(filteredCustomers);
     });
   })
   .catch((error) => {
     console.error("Error fetching data:", error);
   });
 
-function renderButtons(companiesToRender) {
+function renderButtons(customersToRender) {
   // Clear existing buttons
   buttonContainer.innerHTML = "";
 
-  // Create buttons based on the provided companys
-  companiesToRender.forEach((company) => {
+  // Create buttons based on the provided customers
+  customersToRender.forEach((customer) => {
     const button = document.createElement("button");
     button.className = "big-button";
-    button.textContent = company.companyName + "-" + company.companyNumber;
+    button.textContent = customer.name + "-" + customer.customerNumber;
 
     button.addEventListener("click", () => {
       // Construct the URL with the name as a query parameter
-      const url = `company.html?name=${encodeURIComponent(
-        company.companyName
-      )}&companyId=${encodeURIComponent(
-        company.companyId
-      )}&companyNumber=${encodeURIComponent(company.companyNumber)}`;
+      const url = `clientHistory.html?name=${encodeURIComponent(
+        customer.name
+      )}&customerId=${encodeURIComponent(
+        customer.customerId
+      )}&customerNumber=${encodeURIComponent(customer.customerNumber)}`;
 
       window.location.href = url;
     });

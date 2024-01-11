@@ -50,7 +50,7 @@ const createWindow = () => {
       );
     } else if (page === "kart-elsanf") {
       mainWindow.loadFile(
-        path.join(__dirname, "./app/pages/other/kart-elsanf.html")
+        path.join(__dirname, "./app/pages/kart-elsanf/kart-elsanf.html")
       );
     } else if (page === "edafet-3ameel") {
       mainWindow.loadFile(

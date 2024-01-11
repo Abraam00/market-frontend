@@ -8,30 +8,51 @@ document.getElementById("backButton").addEventListener("click", () => {
 const buttonContainer = document.getElementById("buttonContainer");
 
 let customers;
+
 axios
   .get("https://localhost:7163/api/Customer/GetAllCustomers")
   .then((response) => {
     customers = response.data;
     // Create buttons dynamically based on the names
-    customers.forEach((customer) => {
-      const button = document.createElement("button");
-      button.className = "big-button";
-      button.textContent = customer.name;
+    renderButtons(customers);
 
-      button.addEventListener("click", () => {
-        // Construct the URL with the name as a query parameter
-        const url = `client.html?name=${encodeURIComponent(
-          customer.name
-        )}&customerId=${encodeURIComponent(
-          customer.customerId
-        )}&customerNumber=${encodeURIComponent(customer.customerNumber)}`;
-
-        window.location.href = url;
-      });
-
-      buttonContainer.appendChild(button);
+    // Add event listener to search input
+    const searchInput = document.getElementById("search");
+    searchInput.addEventListener("input", () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filteredCustomers = customers.filter(
+        (customer) =>
+          customer.name.toLowerCase().includes(searchTerm) ||
+          customer.customerNumber.toLowerCase().includes(searchTerm)
+      );
+      renderButtons(filteredCustomers);
     });
   })
   .catch((error) => {
     console.error("Error fetching data:", error);
   });
+
+function renderButtons(customersToRender) {
+  // Clear existing buttons
+  buttonContainer.innerHTML = "";
+
+  // Create buttons based on the provided customers
+  customersToRender.forEach((customer) => {
+    const button = document.createElement("button");
+    button.className = "big-button";
+    button.textContent = customer.name + "-" + customer.customerNumber;
+
+    button.addEventListener("click", () => {
+      // Construct the URL with the name as a query parameter
+      const url = `client.html?name=${encodeURIComponent(
+        customer.name
+      )}&customerId=${encodeURIComponent(
+        customer.customerId
+      )}&customerNumber=${encodeURIComponent(customer.customerNumber)}`;
+
+      window.location.href = url;
+    });
+
+    buttonContainer.appendChild(button);
+  });
+}
