@@ -16,30 +16,41 @@
   }
   
   
-    /* CSS for the big buttons */
-    .button-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid with 200px min width */
-      grid-gap: 10px;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+  table {
+    width: 100%; /* Adjust the width as needed */
+    border-collapse: collapse;
+    background-color: #fff; /* Set a background color for the table if desired */
+    margin-bottom: 20px;
     }
     
-    /* CSS for the big buttons */
-    .big-button {
-      background-color: rgb(19, 158, 205);
-      color: white;
-      padding: 20px 40px;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
+    /* Style the table header row */
+    table th {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
     }
     
-    .big-button:hover {
-      background-color: blue;
+    /* Style the table data rows */
+    table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc; /* Add a border for each cell if desired */
     }
-  
+    
+    /* Add some spacing between table rows */
+    table tr {
+    border-bottom: 1px solid #ccc;
+    }
+    
+    /* Highlight the last row as an example */
+    table tbody tr:last-child {
+    background-color: #f0f0f0; /* Set a background color for the last row if desired */
+    }
+    
+    /* Style for hover effect on rows */
+    table tbody tr:hover {
+    background-color: #e0e0e0;
+    }
     #bottom{
       display: flex;
       align-items: center;

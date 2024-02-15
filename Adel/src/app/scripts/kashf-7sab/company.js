@@ -10,11 +10,12 @@ function getQueryParam(param) {
   return urlParams.get(param);
 }
 
-const name = getQueryParam("name");
 const purchaseId = parseInt(getQueryParam("purchaseId"));
-const table = document.querySelector("table"); // Assuming you have a <table> element in your HTML
+const table = document.querySelector("table");
 const tbody = table.querySelector("tbody");
 const totalPrice = document.getElementById("total");
+const transactionId = document.getElementById("transactionId");
+transactionId.textContent = "رقم العملية:" + purchaseId;
 
 let purchaseItems;
 let purchase;

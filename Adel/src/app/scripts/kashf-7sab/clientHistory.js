@@ -3,17 +3,15 @@ const axios = require("axios");
 document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
-// Get the button container element
-const buttonContainer = document.getElementById("buttonContainer");
 
 // Function to get the query parameter from the URL
 function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
+const table = document.querySelector("table");
+const tbody = table.querySelector("tbody");
 
-// // Get the name query parameter from the URL
-// const name = getQueryParam("name");
 let orders;
 let customer;
 axios
@@ -25,24 +23,31 @@ axios
   .then((response) => {
     customer = response.data;
     orders = response.data.orders;
-    // Create buttons dynamically based on the names
-    orders.forEach((order) => {
-      const button = document.createElement("button");
-      button.className = "big-button";
-      button.textContent = formatDate(order.orderDate);
 
-      button.addEventListener("click", () => {
-        // Construct the URL with the name as a query parameter
-        const url = `client.html?name=${encodeURIComponent(
-          customer.name
-        )}&orderId=${encodeURIComponent(
+    orders.forEach((order) => {
+      const row = tbody.insertRow();
+
+      const cellTotal = row.insertCell(0);
+      cellTotal.textContent = order.total;
+
+      const cellorderId = row.insertCell(1);
+      cellorderId.textContent = order.orderId;
+      cellorderId.addEventListener("dblclick", () => {
+        const url = `client.html?orderId=${encodeURIComponent(
           order.orderId
         )}&moneyRemaining=${encodeURIComponent(customer.moneyRemaining)}`;
 
         window.location.href = url;
       });
 
-      buttonContainer.appendChild(button);
+      const cellDate = row.insertCell(2);
+      cellDate.textContent = formatDate(order.orderDate);
+
+      const cellcustomerNumber = row.insertCell(3);
+      cellcustomerNumber.textContent = customer.customerNumber;
+
+      const cellName = row.insertCell(4);
+      cellName.textContent = customer.name;
     });
   })
   .catch((error) => {

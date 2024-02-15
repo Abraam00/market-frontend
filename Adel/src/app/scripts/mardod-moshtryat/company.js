@@ -124,9 +124,13 @@ function getProduct(query) {
     .get(`https://localhost:7163/api/Product/GetProductByName/${query}`)
     .then((response) => {
       const product = response.data;
-      const bigBoxUnit = product.unitsOfSale[0];
-      const boxUnit = product.unitsOfSale[1];
-      const individualUnit = product.unitsOfSale[2];
+      const bigBoxUnit = product.unitsOfSale.find(
+        (unit) => unit.name === "bigBox"
+      );
+      const boxUnit = product.unitsOfSale.find((unit) => unit.name === "box");
+      const individualUnit = product.unitsOfSale.find(
+        (unit) => unit.name === "individual"
+      );
 
       const row = tbody.insertRow();
 

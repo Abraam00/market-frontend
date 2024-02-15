@@ -90,3 +90,5 @@ typings/
 
 # Electron-Forge
 out/
+
+src/app/pages/kart-elsanf/date.html

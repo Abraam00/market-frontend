@@ -17,9 +17,7 @@ const endDate = getQueryParam("endDate");
 let items;
 axios
   .get(
-    `https://localhost:7163/api/Product/GetProductIdCard?productId=${productId}&StartDate=${dateformatter(
-      startDate
-    )}&EndDate=${dateformatter(endDate)}`
+    `https://localhost:7163/api/Product/GetProductIdCard?productId=${productId}&StartDate=${startDate}&EndDate=${endDate}`
   )
   .then((response) => {
     items = response.data;
@@ -30,24 +28,6 @@ axios
   .catch((error) => {
     console.error("Error fetching data:", error);
   });
-
-function dateformatter(dateString) {
-  const dateParts = dateString.split("-");
-  const year = parseInt(dateParts[0], 10);
-  const month = parseInt(dateParts[1], 10) - 1; // Months in JavaScript are 0-based (0-11)
-  const day = parseInt(dateParts[2], 10);
-
-  const formattedDate = new Date(year, month, day);
-
-  // Now, if you want to display it in the same format, you can use the toLocaleDateString method:
-  const formattedDateString = formattedDate.toLocaleDateString("en-CA", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-
-  return formattedDateString;
-}
 
 const table = document.querySelector("table");
 const tbody = table.querySelector("tbody");
@@ -60,9 +40,31 @@ function populateTable(item) {
 
   const cellPurchases = row.insertCell(1);
   cellPurchases.textContent = item.quantityPurchased;
+  cellPurchases.addEventListener("dblclick", () => {
+    const url = `purchases.html?unitType=${encodeURIComponent(
+      item.unitType
+    )}&productId=${encodeURIComponent(
+      productId
+    )}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(
+      endDate
+    )}`;
+
+    window.location.href = url;
+  });
 
   const cellSales = row.insertCell(2);
   cellSales.textContent = item.quantitySold;
+  cellSales.addEventListener("dblclick", () => {
+    const url = `orders.html?unitType=${encodeURIComponent(
+      item.unitType
+    )}&productId=${encodeURIComponent(
+      productId
+    )}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(
+      endDate
+    )}`;
+
+    window.location.href = url;
+  });
 
   const cellType = row.insertCell(3);
   cellType.textContent = item.unitType;

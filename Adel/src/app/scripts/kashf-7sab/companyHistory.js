@@ -4,16 +4,15 @@ document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
 // Get the button container element
-const buttonContainer = document.getElementById("buttonContainer");
 
 // Function to get the query parameter from the URL
 function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
+const table = document.querySelector("table");
+const tbody = table.querySelector("tbody");
 
-// // Get the name query parameter from the URL
-// const name = getQueryParam("name");
 let purchases;
 let company;
 axios
@@ -25,22 +24,31 @@ axios
   .then((response) => {
     company = response.data;
     purchases = response.data.purchases;
-    // Create buttons dynamically based on the names
-    purchases.forEach((purchase) => {
-      const button = document.createElement("button");
-      button.className = "big-button";
-      button.textContent = formatDate(purchase.purchaseDate);
 
-      button.addEventListener("click", () => {
-        // Construct the URL with the name as a query parameter
-        const url = `company.html?name=${encodeURIComponent(
-          company.companyName
-        )}&purchaseId=${encodeURIComponent(purchase.purchaseId)}`;
+    purchases.forEach((purchase) => {
+      const row = tbody.insertRow();
+
+      const cellTotal = row.insertCell(0);
+      cellTotal.textContent = purchase.total;
+
+      const cellPurchaseId = row.insertCell(1);
+      cellPurchaseId.textContent = purchase.purchaseId;
+      cellPurchaseId.addEventListener("dblclick", () => {
+        const url = `company.html?purchaseId=${encodeURIComponent(
+          purchase.purchaseId
+        )}`;
 
         window.location.href = url;
       });
 
-      buttonContainer.appendChild(button);
+      const cellDate = row.insertCell(2);
+      cellDate.textContent = formatDate(purchase.purchaseDate);
+
+      const cellCompanyNumber = row.insertCell(3);
+      cellCompanyNumber.textContent = company.companyNumber;
+
+      const cellName = row.insertCell(4);
+      cellName.textContent = company.companyName;
     });
   })
   .catch((error) => {

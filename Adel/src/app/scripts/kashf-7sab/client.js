@@ -10,7 +10,6 @@ function getQueryParam(param) {
   return urlParams.get(param);
 }
 
-const name = getQueryParam("name");
 const orderId = parseInt(getQueryParam("orderId"));
 const moneyRemaining = getQueryParam("moneyRemaining");
 const table = document.querySelector("table"); // Assuming you have a <table> element in your HTML
@@ -18,8 +17,8 @@ const tbody = table.querySelector("tbody");
 const totalPrice = document.getElementById("total");
 const madyonya = document.getElementById("moneyRemaining");
 madyonya.textContent = moneyRemaining;
-
-console.log(name + orderId);
+const transactionId = document.getElementById("transactionId");
+transactionId.textContent = "رقم العملية:" + orderId;
 
 let orderItems;
 let order;
