@@ -1,5 +1,7 @@
 const axios = require("axios");
 
+const taxRateInput = document.getElementById("taxRateInput");
+
 //getting all product names on page load
 let productNames;
 axios
@@ -100,6 +102,7 @@ function updateGlobal(item, unitOfSale, count, unitPrice, salePrice) {
     unitPrice: parseInt(unitPrice),
     salePrice: parseInt(salePrice),
     quantity: parseInt(count),
+    isTaxable: item.isTaxable,
   };
 
   GlobalState.orderItems.push(orderItem);
@@ -141,12 +144,24 @@ function getProduct(query) {
 
       var cellTotal = row.insertCell(1);
 
-      var cellCount = row.insertCell(2);
+      var cellTax = row.insertCell(2);
+      if (product.isTaxable) {
+        cellTax.textContent = "نعم";
+      } else {
+        cellTax.textContent = "لا";
+      }
+
+      var cellCount = row.insertCell(3);
       const countInput = document.createElement("input");
       countInput.addEventListener("keyup", (event) => {
         if (event.key === "Enter") {
+          console.log(
+            countInput.value + unitPriceInput.value + taxRateInput.value
+          );
           cellTotal.textContent =
-            parseInt(countInput.value) * parseInt(unitPriceInput.value);
+            (parseInt(unitPriceInput.value) +
+              parseInt(unitPriceInput.value) * parseInt(taxRateInput.value)) *
+            parseInt(countInput.value);
           itemTotal = parseInt(cellTotal.textContent);
           if (isNaN(total)) {
             total = 0;
@@ -160,7 +175,9 @@ function getProduct(query) {
           ) {
             total -= itemTotal;
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(unitPriceInput.value);
+              parseInt(countInput.value) *
+              (parseInt(unitPriceInput.value) +
+                parseInt(unitPriceInput.value) * parseInt(taxRateInput.value));
             itemTotal = parseInt(cellTotal.textContent);
             total += itemTotal;
             totalPrice.textContent = total;
@@ -182,7 +199,9 @@ function getProduct(query) {
           ) {
             total -= itemTotal;
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(unitPriceInput.value);
+              parseInt(countInput.value) *
+              (parseInt(unitPriceInput.value) +
+                parseInt(unitPriceInput.value) * parseInt(taxRateInput.value));
             itemTotal = parseInt(cellTotal.textContent);
             total += itemTotal;
             totalPrice.textContent = total;
@@ -205,7 +224,9 @@ function getProduct(query) {
           ) {
             total -= itemTotal;
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(unitPriceInput.value);
+              parseInt(countInput.value) *
+              (parseInt(unitPriceInput.value) +
+                parseInt(unitPriceInput.value) * parseInt(taxRateInput.value));
             itemTotal = parseInt(cellTotal.textContent);
             total += itemTotal;
             totalPrice.textContent = total;
@@ -225,17 +246,17 @@ function getProduct(query) {
       });
       cellCount.appendChild(countInput);
 
-      var cellSalePrice = row.insertCell(3);
+      var cellSalePrice = row.insertCell(4);
       const salePriceInput = document.createElement("input");
       salePriceInput.value = bigBoxUnit.salePrice;
       cellSalePrice.appendChild(salePriceInput);
 
-      var cellUnitPrice = row.insertCell(4);
+      var cellUnitPrice = row.insertCell(5);
       const unitPriceInput = document.createElement("input");
       unitPriceInput.value = bigBoxUnit.unitPrice;
       cellUnitPrice.appendChild(unitPriceInput);
 
-      const cellType = row.insertCell(5);
+      const cellType = row.insertCell(6);
       const dropdown = document.createElement("select");
 
       // Add options to the dropdown menu (replace 'optionValue' with your actual values)
@@ -268,7 +289,7 @@ function getProduct(query) {
       });
       cellType.appendChild(dropdown);
 
-      const cellName = row.insertCell(6);
+      const cellName = row.insertCell(7);
       cellName.textContent = product.name;
     })
     .catch((error) => {
@@ -281,6 +302,7 @@ function createPurchase(companyId) {
   axios
     .post("https://localhost:7163/api/Purchase/CreatePurchase", {
       companyId: companyId,
+      taxRate: parseFloat(taxRateInput.value),
       purchaseItems: GlobalState.orderItems,
     })
     .then((response) => {
@@ -351,7 +373,9 @@ document.addEventListener("keydown", (event) => {
         countInput.addEventListener("keyup", (event) => {
           if (event.key === "Enter") {
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(unitPriceInput.value);
+              parseInt(countInput.value) *
+              (parseInt(unitPriceInput.value) +
+                parseInt(unitPriceInput.value) * parseInt(taxRateInput.value));
             itemTotal = parseInt(cellTotal.textContent);
             if (isNaN(total)) {
               total = 0;
@@ -365,7 +389,10 @@ document.addEventListener("keydown", (event) => {
             ) {
               total -= itemTotal;
               cellTotal.textContent =
-                parseInt(countInput.value) * parseInt(unitPriceInput.value);
+                parseInt(countInput.value) *
+                (parseInt(unitPriceInput.value) +
+                  parseInt(unitPriceInput.value) *
+                    parseInt(taxRateInput.value));
               itemTotal = parseInt(cellTotal.textContent);
               total += itemTotal;
               totalPrice.textContent = total;
@@ -387,7 +414,10 @@ document.addEventListener("keydown", (event) => {
             ) {
               total -= itemTotal;
               cellTotal.textContent =
-                parseInt(countInput.value) * parseInt(unitPriceInput.value);
+                parseInt(countInput.value) *
+                (parseInt(unitPriceInput.value) +
+                  parseInt(unitPriceInput.value) *
+                    parseInt(taxRateInput.value));
               itemTotal = parseInt(cellTotal.textContent);
               total += itemTotal;
               totalPrice.textContent = total;
@@ -410,7 +440,10 @@ document.addEventListener("keydown", (event) => {
             ) {
               total -= itemTotal;
               cellTotal.textContent =
-                parseInt(countInput.value) * parseInt(unitPriceInput.value);
+                parseInt(countInput.value) *
+                (parseInt(unitPriceInput.value) +
+                  parseInt(unitPriceInput.value) *
+                    parseInt(taxRateInput.value));
               itemTotal = parseInt(cellTotal.textContent);
               total += itemTotal;
               totalPrice.textContent = total;

@@ -56,9 +56,12 @@ const createWindow = () => {
       mainWindow.loadFile(
         path.join(__dirname, "./app/pages/other/edafet-3ameel.html")
       );
-    } else if (page === "edafet-sherka") {
       mainWindow.loadFile(
         path.join(__dirname, "./app/pages/other/edafet-sherka.html")
+      );
+    } else if (page === "taxable-purchases") {
+      mainWindow.loadFile(
+        path.join("./src/app/pages/other/taxable-purhcases.html")
       );
     }
   });

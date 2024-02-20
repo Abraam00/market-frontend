@@ -78,12 +78,12 @@ function removeFromGlobal(productId, unitOfSale) {
   }
 }
 
-function updateGlobal(item, unitOfSale, count) {
+function updateGlobal(item, unitOfSale, count, salePrice) {
   let orderItem = {
     productId: item.productId,
     quantity: parseInt(count),
     unitType: unitOfSale.name,
-    salePrice: unitOfSale.salePrice,
+    salePrice: parseInt(salePrice),
   };
   GlobalState.orderItems.push(orderItem);
 }
@@ -114,8 +114,8 @@ function getProduct(query) {
       deleteRowButton.textContent = "delete";
       deleteRowButton.addEventListener("click", () => {
         var rowIndex = deleteRowButton.parentNode.parentNode;
-        var unitType = rowIndex.cells[5].innerText;
         var productId = rowIndex.cells[1].innerText;
+        var unitType = rowIndex.cells[5].innerText;
         var removableTotal = rowIndex.cells[2].innerText;
         total -= parseInt(removableTotal);
         totalPrice.textContent = total;
@@ -124,7 +124,6 @@ function getProduct(query) {
       });
 
       cellDelete.appendChild(deleteRowButton);
-
       var cellProductId = row.insertCell(1);
       cellProductId.textContent = product.productId;
       var cellTotal = row.insertCell(2);
@@ -134,7 +133,7 @@ function getProduct(query) {
       countInput.addEventListener("keyup", (event) => {
         if (event.key === "Enter") {
           cellTotal.textContent =
-            parseInt(countInput.value) * parseInt(cellPrice.textContent);
+            parseInt(countInput.value) * parseInt(priceInput.value);
           itemTotal = parseInt(cellTotal.textContent);
           if (isNaN(total)) {
             total = 0;
@@ -146,55 +145,77 @@ function getProduct(query) {
             (bigBoxUnit.quantity != 0 ||
               parseInt(countInput.value) > bigBoxUnit.quantity)
           ) {
+            if (parseInt(priceInput.value) < bigBoxUnit.unitPrice) {
+              priceInput.value = bigBoxUnit.unitPrice;
+            }
             total -= itemTotal;
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+              parseInt(countInput.value) * parseInt(priceInput.value);
             itemTotal = parseInt(cellTotal.textContent);
             total += itemTotal;
             totalPrice.textContent = total;
-            updateGlobal(product, bigBoxUnit, countInput.value);
+            updateGlobal(
+              product,
+              bigBoxUnit,
+              countInput.value,
+              priceInput.value
+            );
             cellType.textContent = "bigBox";
             countInput.disabled = true;
+            priceInput.disabled = true;
           } else if (
             dropdown.value === "box" &&
             (boxUnit.quantity != 0 ||
               parseInt(countInput.value) > boxUnit.quantity)
           ) {
+            if (parseInt(priceInput.value) < boxUnit.unitPrice) {
+              priceInput.value = boxUnit.unitPrice;
+            }
             total -= itemTotal;
-            cellPrice.textContent = boxUnit.salePrice;
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+              parseInt(countInput.value) * parseInt(priceInput.value);
             itemTotal = parseInt(cellTotal.textContent);
             total += itemTotal;
             totalPrice.textContent = total;
-            updateGlobal(product, boxUnit, countInput.value);
+            updateGlobal(product, boxUnit, countInput.value, priceInput.value);
             cellType.textContent = "box";
             dropdown.disabled = true;
             countInput.disabled = true;
+            priceInput.disabled = true;
           } else if (
             dropdown.value === "individual" &&
             (individualUnit.quantity != 0 ||
               boxUnit.quantity != 0 ||
               parseInt(countInput.value) > individualUnit.quantity)
           ) {
+            if (parseInt(priceInput.value) < individualUnit.unitPrice) {
+              priceInput.value = individualUnit.unitPrice;
+            }
             total -= itemTotal;
-            cellPrice.textContent = individualUnit.salePrice;
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+              parseInt(countInput.value) * parseInt(priceInput.value);
             itemTotal = parseInt(cellTotal.textContent);
             total += itemTotal;
             totalPrice.textContent = total;
-            updateGlobal(product, individualUnit, countInput.value);
+            updateGlobal(
+              product,
+              individualUnit,
+              countInput.value,
+              priceInput.value
+            );
             cellType.textContent = "individual";
             dropdown.disabled = true;
             countInput.disabled = true;
+            priceInput.disabled = true;
           }
         }
       });
       cellCount.appendChild(countInput);
 
       var cellPrice = row.insertCell(4);
-      cellPrice.textContent = bigBoxUnit.salePrice;
+      const priceInput = document.createElement("input");
+      priceInput.value = bigBoxUnit.salePrice;
+      cellPrice.appendChild(priceInput);
 
       const cellType = row.insertCell(5);
       const dropdown = document.createElement("select");
@@ -216,11 +237,11 @@ function getProduct(query) {
       dropdown.appendChild(individual);
       dropdown.addEventListener("change", () => {
         if (dropdown.value === "bigBox") {
-          cellPrice.textContent = bigBoxUnit.salePrice;
+          priceInput.value = bigBoxUnit.salePrice;
         } else if (dropdown.value === "box") {
-          cellPrice.textContent = boxUnit.salePrice;
+          priceInput.value = boxUnit.salePrice;
         } else if (dropdown.value === "individual") {
-          cellPrice.textContent = individualUnit.salePrice;
+          priceInput.value = individualUnit.salePrice;
         }
       });
       cellType.appendChild(dropdown);
@@ -319,8 +340,8 @@ document.addEventListener("keydown", (event) => {
         deleteRowButton.textContent = "delete";
         deleteRowButton.addEventListener("click", () => {
           var rowIndex = deleteRowButton.parentNode.parentNode;
-          var unitType = rowIndex.cells[5].innerText;
           var productId = rowIndex.cells[1].innerText;
+          var unitType = rowIndex.cells[5].innerText;
           var removableTotal = rowIndex.cells[2].innerText;
           total -= parseInt(removableTotal);
           totalPrice.textContent = total;
@@ -329,7 +350,6 @@ document.addEventListener("keydown", (event) => {
         });
 
         cellDelete.appendChild(deleteRowButton);
-
         var cellProductId = row.insertCell(1);
         cellProductId.textContent = product.productId;
         var cellTotal = row.insertCell(2);
@@ -339,7 +359,7 @@ document.addEventListener("keydown", (event) => {
         countInput.addEventListener("keyup", (event) => {
           if (event.key === "Enter") {
             cellTotal.textContent =
-              parseInt(countInput.value) * parseInt(cellPrice.textContent);
+              parseInt(countInput.value) * parseInt(priceInput.value);
             itemTotal = parseInt(cellTotal.textContent);
             if (isNaN(total)) {
               total = 0;
@@ -351,55 +371,82 @@ document.addEventListener("keydown", (event) => {
               (bigBoxUnit.quantity != 0 ||
                 parseInt(countInput.value) > bigBoxUnit.quantity)
             ) {
+              if (parseInt(priceInput.value) < bigBoxUnit.unitPrice) {
+                priceInput.value = bigBoxUnit.unitPrice;
+              }
               total -= itemTotal;
               cellTotal.textContent =
-                parseInt(countInput.value) * parseInt(cellPrice.textContent);
+                parseInt(countInput.value) * parseInt(priceInput.value);
               itemTotal = parseInt(cellTotal.textContent);
               total += itemTotal;
               totalPrice.textContent = total;
-              updateGlobal(product, bigBoxUnit, countInput.value);
+              updateGlobal(
+                product,
+                bigBoxUnit,
+                countInput.value,
+                priceInput.value
+              );
               cellType.textContent = "bigBox";
               countInput.disabled = true;
+              priceInput.disabled = true;
             } else if (
               dropdown.value === "box" &&
               (boxUnit.quantity != 0 ||
                 parseInt(countInput.value) > boxUnit.quantity)
             ) {
+              if (parseInt(priceInput.value) < boxUnit.unitPrice) {
+                priceInput.value = boxUnit.unitPrice;
+              }
               total -= itemTotal;
-              cellPrice.textContent = boxUnit.salePrice;
               cellTotal.textContent =
-                parseInt(countInput.value) * parseInt(cellPrice.textContent);
+                parseInt(countInput.value) * parseInt(priceInput.value);
               itemTotal = parseInt(cellTotal.textContent);
               total += itemTotal;
               totalPrice.textContent = total;
-              updateGlobal(product, boxUnit, countInput.value);
+              updateGlobal(
+                product,
+                boxUnit,
+                countInput.value,
+                priceInput.value
+              );
               cellType.textContent = "box";
               dropdown.disabled = true;
               countInput.disabled = true;
+              priceInput.disabled = true;
             } else if (
               dropdown.value === "individual" &&
               (individualUnit.quantity != 0 ||
                 boxUnit.quantity != 0 ||
                 parseInt(countInput.value) > individualUnit.quantity)
             ) {
+              if (parseInt(priceInput.value) < individualUnit.unitPrice) {
+                priceInput.value = individualUnit.unitPrice;
+              }
               total -= itemTotal;
-              cellPrice.textContent = individualUnit.salePrice;
               cellTotal.textContent =
-                parseInt(countInput.value) * parseInt(cellPrice.textContent);
+                parseInt(countInput.value) * parseInt(priceInput.value);
               itemTotal = parseInt(cellTotal.textContent);
               total += itemTotal;
               totalPrice.textContent = total;
-              updateGlobal(product, individualUnit, countInput.value);
+              updateGlobal(
+                product,
+                individualUnit,
+                countInput.value,
+                priceInput.value
+              );
               cellType.textContent = "individual";
               dropdown.disabled = true;
               countInput.disabled = true;
+              priceInput.disabled = true;
             }
           }
         });
         cellCount.appendChild(countInput);
 
         var cellPrice = row.insertCell(4);
-        cellPrice.textContent = bigBoxUnit.salePrice;
+        const priceInput = document.createElement("input");
+        priceInput.value = bigBoxUnit.salePrice;
+        cellPrice.appendChild(priceInput);
 
         const cellType = row.insertCell(5);
         const dropdown = document.createElement("select");
@@ -421,11 +468,11 @@ document.addEventListener("keydown", (event) => {
         dropdown.appendChild(individual);
         dropdown.addEventListener("change", () => {
           if (dropdown.value === "bigBox") {
-            cellPrice.textContent = bigBoxUnit.salePrice;
+            priceInput.value = bigBoxUnit.salePrice;
           } else if (dropdown.value === "box") {
-            cellPrice.textContent = boxUnit.salePrice;
+            priceInput.value = boxUnit.salePrice;
           } else if (dropdown.value === "individual") {
-            cellPrice.textContent = individualUnit.salePrice;
+            priceInput.value = individualUnit.salePrice;
           }
         });
         cellType.appendChild(dropdown);

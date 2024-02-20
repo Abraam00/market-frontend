@@ -4,32 +4,15 @@ document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
 });
 
-function getQueryParam(param) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(param);
-}
-
-const unitType = getQueryParam("unitType");
-const productId = getQueryParam("productId");
-const startDate = getQueryParam("startDate");
-const endDate = getQueryParam("endDate");
 const tableContainer = document.getElementById("table-container");
-
-let orders;
+let purchases;
 
 axios
-  .get(
-    `https://localhost:7163/api/Order/getOrderByDateRangeWithProductId?productId=${productId}&StartDate=${startDate}&EndDate=${endDate}`
-  )
+  .get("https://localhost:7163/api/Purchase/GetAllPurchasesWithTaxableProducts")
   .then((response) => {
-    orders = response.data;
-    const ordersWithUnitType = orders.filter((order) =>
-      order.orderItems.some(
-        (item) => String(item.unitType).toLowerCase() === unitType.toLowerCase()
-      )
-    );
+    purchases = response.data;
 
-    ordersWithUnitType.forEach((order) => {
+    purchases.forEach((purchase) => {
       const table = document.createElement("table");
       table.setAttribute("border", "1");
 
@@ -39,6 +22,8 @@ axios
       const thUnitType = document.createElement("th");
       const thUnitPrice = document.createElement("th");
       const thQuantity = document.createElement("th");
+      const thTaxRate = document.createElement("th");
+      const thPriceAfterTax = document.createElement("th");
       const thTotal = document.createElement("th");
       const thDate = document.createElement("th");
       thName.textContent = "الاسم";
@@ -47,9 +32,12 @@ axios
       thUnitPrice.textContent = "السعر";
       thQuantity.textContent = "العدد";
       thTotal.textContent = "المجموع";
-
+      thTaxRate.textContent = "الضريبة المضافة";
+      thPriceAfterTax.textContent = "السعر بعد الضريبة المضافة";
       trHead.appendChild(thTotal);
       trHead.appendChild(thQuantity);
+      trHead.appendChild(thPriceAfterTax);
+      trHead.appendChild(thTaxRate);
       trHead.appendChild(thUnitPrice);
       trHead.appendChild(thUnitType);
       trHead.appendChild(thDate);
@@ -59,24 +47,36 @@ axios
       const tbody = document.createElement("tbody");
 
       // Iterate over order properties to create table cells
-      order.orderItems.forEach((item) => {
+      purchase.purchaseItems.forEach((item) => {
         const trBody = document.createElement("tr");
         const tdName = document.createElement("td");
         const tdDate = document.createElement("td");
         const tdUnitType = document.createElement("td");
         const tdUnitPrice = document.createElement("td");
         const tdQuantity = document.createElement("td");
+        const tdTaxRate = document.createElement("td");
+        const tdPriceAfterTax = document.createElement("td");
         const tdTotal = document.createElement("td");
         tdName.textContent = item.productName;
-        tdDate.textContent = formatDate(order.orderDate);
-        console.log(formatDate(order.orderDate));
+        tdDate.textContent = formatDate(purchase.purchaseDate);
         tdUnitType.textContent = item.unitType;
         tdUnitPrice.textContent = item.unitPrice;
         tdQuantity.textContent = item.quantity;
-        tdTotal.textContent = item.quantity * item.unitPrice;
+        if (item.isTaxable) {
+          tdTaxRate.textContent = purchase.taxRate;
+          tdPriceAfterTax.textContent =
+            item.unitPrice + item.unitPrice * purchase.taxRate;
+        } else {
+          tdTaxRate.textContent = "0";
+          tdPriceAfterTax.textContent = item.unitPrice;
+        }
+
+        tdTotal.textContent = item.priceAfterTax;
 
         trBody.appendChild(tdTotal);
         trBody.appendChild(tdQuantity);
+        trBody.appendChild(tdPriceAfterTax);
+        trBody.appendChild(tdTaxRate);
         trBody.appendChild(tdUnitPrice);
         trBody.appendChild(tdUnitType);
         trBody.appendChild(tdDate);
@@ -85,9 +85,9 @@ axios
       });
 
       table.appendChild(tbody);
-      if (order.customerName != null) {
+      if (purchase.companyName != null) {
         const nameLabel = document.createElement("h2");
-        nameLabel.textContent = order.customerName + " (agel)";
+        nameLabel.textContent = purchase.companyName;
         nameLabel.id = "labels";
         tableContainer.appendChild(nameLabel);
       }
@@ -95,7 +95,7 @@ axios
     });
   })
   .catch((error) => {
-    console.error("Error fetching data:", error);
+    console.log(error);
   });
 
 function formatDate(inputDate) {
@@ -112,23 +112,4 @@ function formatDate(inputDate) {
   const formattedTime = hour + ":" + minute;
 
   return formattedDate + " " + formattedTime;
-}
-
-function populateTable(item) {
-  const row = tbody.insertRow();
-
-  const cellTotal = row.insertCell(0);
-  cellTotal.textContent = parseInt(item.unitPrice) * parseInt(item.quantity);
-
-  const cellCount = row.insertCell(1);
-  cellCount.textContent = item.quantity;
-
-  const cellPrice = row.insertCell(2);
-  cellPrice.textContent = item.unitPrice;
-
-  const cellType = row.insertCell(3);
-  cellType.textContent = item.unitType;
-
-  const cellName = row.insertCell(4);
-  cellName.textContent = item.productName;
 }
