@@ -161,3 +161,10 @@ table tbody tr:hover {
 #unitButton:hover {
   background-color: blue; /* Darker blue background color on hover */
 }
+
+#tax{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}

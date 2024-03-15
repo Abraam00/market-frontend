@@ -1,4 +1,5 @@
 const axios = require("axios");
+const taxRateInput = document.getElementById("taxRateInput");
 
 //getting all product names on page load
 let productNames;
@@ -310,6 +311,7 @@ function createOrder(customerId, moneyPaid) {
       paymentType: "agel",
       moneyPaid: moneyPaid,
       orderNumber: "",
+      taxRate: taxRateInput.value,
     })
     .then((response) => {
       GlobalState.orderItems.length = 0;

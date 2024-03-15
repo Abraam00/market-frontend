@@ -1,0 +1,76 @@
+#backButton {
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+  }
+  
+  /* CSS for button hover effect (optional) */
+  #backButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }
+  .container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.inputs-container {
+    margin-top: 20px;
+}
+
+.input-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+input {
+    flex: 1;
+    margin-right: 10px;
+    padding: 8px;
+    font-size: 14px;
+}
+#insertButton{
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+}
+#insertButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }
+
+#payButton{
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+}
+#pauButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }

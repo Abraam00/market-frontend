@@ -1,0 +1,54 @@
+#backButton {
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+  }
+  
+  /* CSS for button hover effect (optional) */
+  #backButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }
+
+  /* styles.css */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: rgb(19, 158, 205); /* Light blue background color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: blue; /* Darker blue background color on hover */
+}
+
+select{
+  width: 20%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}

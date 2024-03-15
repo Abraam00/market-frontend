@@ -1,65 +1,83 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Electron Home Page</title>
-    <link rel="stylesheet" type="text/css" href="index.css" />
-  </head>
-  <body>
-    <div class="button-grid">
-      <button id="moshtryat">المشتريات</button>
-      <button id="mardod-moshtryat">مردود المشتريات</button>
-      <button id="mabe3at">مبيعات</button>
-      <button id="mardod-mabe3at">مردود مبيعات</button>
-      <button id="kashf-7sab">كشف حساب</button>
-      <button id="kart-elsanf">كرت الصنف</button>
-      <button id="edafet-3ameel">اضافة عميل</button>
-      <button id="edafet-sherka">اضافة شركة</button>
-      <button id="taxable-purchases">فواتير ضريبية</button>
-    </div>
-    <script>
-      const { ipcRenderer } = require("electron");
+	<head>
+		<title>Electron Home Page</title>
+		<link rel="stylesheet" type="text/css" href="index.css" />
+	</head>
+	<body>
+		<div class="button-grid">
+			<button id="moshtryat">المشتريات</button>
+			<button id="mardod-moshtryat">مردود المشتريات</button>
+			<button id="mabe3at">مبيعات</button>
+			<button id="mardod-mabe3at">مردود مبيعات</button>
+			<button id="kashf-7sab">كشف حساب</button>
+			<button id="kart-elsanf">كرت الصنف</button>
+			<button id="edafet-3ameel">اضافة عميل</button>
+			<button id="edafet-sherka">اضافة مورد</button>
+			<button id="taxable-purchases">فواتير ضريبية</button>
+			<button id="edaft-sanf">اضافة صنف</button>
+			<button id="editProduct">تعديل صنف</button>
+			<button id="customerPayOff">تسديد مستحقات</button>
+			<button id="inventory">جرد</button>
+		</div>
+		<script>
+			const { ipcRenderer } = require("electron");
 
-      // Function to navigate to a specific page when a button is clicked.
-      const navigateToPage = (page) => {
-        ipcRenderer.send("navigate", page);
-      };
+			// Function to navigate to a specific page when a button is clicked.
+			const navigateToPage = (page) => {
+				ipcRenderer.send("navigate", page);
+			};
 
-      // Add click event listeners for each button.
-      document.getElementById("moshtryat").addEventListener("click", () => {
-        navigateToPage("moshtryat");
-      });
+			// Add click event listeners for each button.
+			document.getElementById("moshtryat").addEventListener("click", () => {
+				navigateToPage("moshtryat");
+			});
 
-      document
-        .getElementById("mardod-moshtryat")
-        .addEventListener("click", () => {
-          navigateToPage("mardod-moshtryat");
-        });
-      document.getElementById("mabe3at").addEventListener("click", () => {
-        navigateToPage("mabe3at");
-      });
+			document
+				.getElementById("mardod-moshtryat")
+				.addEventListener("click", () => {
+					navigateToPage("mardod-moshtryat");
+				});
+			document.getElementById("mabe3at").addEventListener("click", () => {
+				navigateToPage("mabe3at");
+			});
 
-      document
-        .getElementById("mardod-mabe3at")
-        .addEventListener("click", () => {
-          navigateToPage("mardod-mabe3at");
-        });
-      document.getElementById("kashf-7sab").addEventListener("click", () => {
-        navigateToPage("kashf-7sab");
-      });
-      document.getElementById("kart-elsanf").addEventListener("click", () => {
-        navigateToPage("kart-elsanf");
-      });
-      document.getElementById("edafet-3ameel").addEventListener("click", () => {
-        navigateToPage("edafet-3ameel");
-      });
-      document.getElementById("edafet-sherka").addEventListener("click", () => {
-        navigateToPage("edafet-sherka");
-      });
-      document
-        .getElementById("taxable-purchases")
-        .addEventListener("click", () => {
-          navigateToPage("taxable-purchases");
-        });
-    </script>
-  </body>
+			document
+				.getElementById("mardod-mabe3at")
+				.addEventListener("click", () => {
+					navigateToPage("mardod-mabe3at");
+				});
+			document.getElementById("kashf-7sab").addEventListener("click", () => {
+				navigateToPage("kashf-7sab");
+			});
+			document.getElementById("kart-elsanf").addEventListener("click", () => {
+				navigateToPage("kart-elsanf");
+			});
+			document.getElementById("edafet-3ameel").addEventListener("click", () => {
+				navigateToPage("edafet-3ameel");
+			});
+			document.getElementById("edafet-sherka").addEventListener("click", () => {
+				navigateToPage("edafet-sherka");
+			});
+			document
+				.getElementById("taxable-purchases")
+				.addEventListener("click", () => {
+					navigateToPage("taxable-purchases");
+				});
+			document.getElementById("edaft-sanf").addEventListener("click", () => {
+				navigateToPage("edaft-sanf");
+			});
+			document.getElementById("editProduct").addEventListener("click", () => {
+				navigateToPage("editProduct");
+			});
+			document
+				.getElementById("customerPayOff")
+				.addEventListener("click", () => {
+					navigateToPage("customerPayOff");
+				});
+			document.getElementById("inventory").addEventListener("click", () => {
+				navigateToPage("inventory");
+			});
+		</script>
+	</body>
 </html>
