@@ -107,13 +107,8 @@ function getProduct(query) {
 		.get(`https://localhost:7163/api/Product/GetProductByName/${query}`)
 		.then((response) => {
 			const product = response.data;
-			const bigBoxUnit = product.unitsOfSale.find(
-				(unit) => unit.name === "bigBox"
-			);
-			const boxUnit = product.unitsOfSale.find((unit) => unit.name === "box");
-			const individualUnit = product.unitsOfSale.find(
-				(unit) => unit.name === "individual"
-			);
+			const unitsOfSale = [];
+			product.unitsOfSale.forEach((u) => unitsOfSale.push(u));
 
 			const row = tbody.insertRow();
 			var cellDelete = row.insertCell(0);
@@ -147,73 +142,37 @@ function getProduct(query) {
 					}
 					total += itemTotal;
 					totalPrice.textContent = total;
-					if (
-						dropdown.value === "bigBox" &&
-						(bigBoxUnit.quantity != 0 ||
-							parseInt(countInput.value) > bigBoxUnit.quantity)
-					) {
-						if (parseInt(priceInput.value) < bigBoxUnit.unitPrice) {
-							priceInput.value = bigBoxUnit.unitPrice;
+					const selectedUnit = unitsOfSale.find(
+						(unit) => unit.name === dropdown.value
+					);
+					if (selectedUnit) {
+						const quantity = selectedUnit.quantity;
+						const unitPrice = selectedUnit.unitPrice;
+						console.log(quantity);
+
+						if (quantity != 0 && !parseInt(countInput.value) > quantity) {
+							if (parseInt(priceInput.value) < unitPrice) {
+								priceInput.value = unitPrice;
+							}
+							total -= itemTotal;
+							cellTotal.textContent =
+								parseInt(countInput.value) * parseInt(priceInput.value);
+							itemTotal = parseInt(cellTotal.textContent);
+							total += itemTotal;
+							totalPrice.textContent = total;
+							updateGlobal(
+								product,
+								selectedUnit,
+								countInput.value,
+								priceInput.value
+							);
+							cellType.textContent = dropdown.value;
+							dropdown.disabled = true;
+							countInput.disabled = true;
+							priceInput.disabled = true;
+						} else {
+							alert("معندكش كفاية");
 						}
-						total -= itemTotal;
-						cellTotal.textContent =
-							parseInt(countInput.value) * parseInt(priceInput.value);
-						itemTotal = parseInt(cellTotal.textContent);
-						total += itemTotal;
-						totalPrice.textContent = total;
-						updateGlobal(
-							product,
-							bigBoxUnit,
-							countInput.value,
-							priceInput.value
-						);
-						cellType.textContent = "bigBox";
-						countInput.disabled = true;
-						priceInput.disabled = true;
-					} else if (
-						dropdown.value === "box" &&
-						(boxUnit.quantity != 0 ||
-							parseInt(countInput.value) > boxUnit.quantity)
-					) {
-						if (parseInt(priceInput.value) < boxUnit.unitPrice) {
-							priceInput.value = boxUnit.unitPrice;
-						}
-						total -= itemTotal;
-						cellTotal.textContent =
-							parseInt(countInput.value) * parseInt(priceInput.value);
-						itemTotal = parseInt(cellTotal.textContent);
-						total += itemTotal;
-						totalPrice.textContent = total;
-						updateGlobal(product, boxUnit, countInput.value, priceInput.value);
-						cellType.textContent = "box";
-						dropdown.disabled = true;
-						countInput.disabled = true;
-						priceInput.disabled = true;
-					} else if (
-						dropdown.value === "individual" &&
-						(individualUnit.quantity != 0 ||
-							boxUnit.quantity != 0 ||
-							parseInt(countInput.value) > individualUnit.quantity)
-					) {
-						if (parseInt(priceInput.value) < individualUnit.unitPrice) {
-							priceInput.value = individualUnit.unitPrice;
-						}
-						total -= itemTotal;
-						cellTotal.textContent =
-							parseInt(countInput.value) * parseInt(priceInput.value);
-						itemTotal = parseInt(cellTotal.textContent);
-						total += itemTotal;
-						totalPrice.textContent = total;
-						updateGlobal(
-							product,
-							individualUnit,
-							countInput.value,
-							priceInput.value
-						);
-						cellType.textContent = "individual";
-						dropdown.disabled = true;
-						countInput.disabled = true;
-						priceInput.disabled = true;
 					}
 				}
 			});
@@ -221,36 +180,29 @@ function getProduct(query) {
 
 			var cellPrice = row.insertCell(4);
 			const priceInput = document.createElement("input");
-			priceInput.value = bigBoxUnit.salePrice;
+			priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
 			cellPrice.appendChild(priceInput);
 
 			const cellType = row.insertCell(5);
 			const dropdown = document.createElement("select");
 
-			// Add options to the dropdown menu (replace 'optionValue' with your actual values)
-			const bigBox = document.createElement("option");
-			bigBox.value = "bigBox";
-			bigBox.textContent = "bigBox";
-			dropdown.appendChild(bigBox);
+			// Populate dropdown options dynamically
+			unitsOfSale.forEach((unit) => {
+				const option = document.createElement("option");
+				option.value = unit.name;
+				option.textContent = unit.name;
+				dropdown.appendChild(option);
+			});
 
-			const box = document.createElement("option");
-			box.value = "box";
-			box.textContent = "box";
-			dropdown.appendChild(box);
-
-			const individual = document.createElement("option");
-			individual.value = "individual";
-			individual.textContent = "individual";
-			dropdown.appendChild(individual);
 			dropdown.addEventListener("change", () => {
-				if (dropdown.value === "bigBox") {
-					priceInput.value = bigBoxUnit.salePrice;
-				} else if (dropdown.value === "box") {
-					priceInput.value = boxUnit.salePrice;
-				} else if (dropdown.value === "individual") {
-					priceInput.value = individualUnit.salePrice;
+				const selectedUnit = unitsOfSale.find(
+					(unit) => unit.name === dropdown.value
+				);
+				if (selectedUnit) {
+					priceInput.value = selectedUnit.salePrice;
 				}
 			});
+
 			cellType.appendChild(dropdown);
 
 			const cellName = row.insertCell(6);
@@ -318,13 +270,8 @@ document.addEventListener("keydown", (event) => {
 			)
 			.then((response) => {
 				const product = response.data;
-				const bigBoxUnit = product.unitsOfSale.find(
-					(unit) => unit.name === "bigBox"
-				);
-				const boxUnit = product.unitsOfSale.find((unit) => unit.name === "box");
-				const individualUnit = product.unitsOfSale.find(
-					(unit) => unit.name === "individual"
-				);
+				const unitsOfSale = [];
+				product.unitsOfSale.forEach((u) => unitsOfSale.push(u));
 
 				const row = tbody.insertRow();
 				var cellDelete = row.insertCell(0);
@@ -358,78 +305,36 @@ document.addEventListener("keydown", (event) => {
 						}
 						total += itemTotal;
 						totalPrice.textContent = total;
-						if (
-							dropdown.value === "bigBox" &&
-							(bigBoxUnit.quantity != 0 ||
-								parseInt(countInput.value) > bigBoxUnit.quantity)
-						) {
-							if (parseInt(priceInput.value) < bigBoxUnit.unitPrice) {
-								priceInput.value = bigBoxUnit.unitPrice;
+						const selectedUnit = unitsOfSale.find(
+							(unit) => unit.name === dropdown.value
+						);
+						if (selectedUnit) {
+							const quantity = selectedUnit.quantity;
+							const unitPrice = selectedUnit.unitPrice;
+
+							if (quantity != 0 && !parseInt(countInput.value) > quantity) {
+								if (parseInt(priceInput.value) < unitPrice) {
+									priceInput.value = unitPrice;
+								}
+								total -= itemTotal;
+								cellTotal.textContent =
+									parseInt(countInput.value) * parseInt(priceInput.value);
+								itemTotal = parseInt(cellTotal.textContent);
+								total += itemTotal;
+								totalPrice.textContent = total;
+								updateGlobal(
+									product,
+									selectedUnit,
+									countInput.value,
+									priceInput.value
+								);
+								cellType.textContent = dropdown.value;
+								dropdown.disabled = true;
+								countInput.disabled = true;
+								priceInput.disabled = true;
+							} else {
+								alert("معندكش كفاية");
 							}
-							total -= itemTotal;
-							cellTotal.textContent =
-								parseInt(countInput.value) * parseInt(priceInput.value);
-							itemTotal = parseInt(cellTotal.textContent);
-							total += itemTotal;
-							totalPrice.textContent = total;
-							updateGlobal(
-								product,
-								bigBoxUnit,
-								countInput.value,
-								priceInput.value
-							);
-							cellType.textContent = "bigBox";
-							countInput.disabled = true;
-							priceInput.disabled = true;
-						} else if (
-							dropdown.value === "box" &&
-							(boxUnit.quantity != 0 ||
-								parseInt(countInput.value) > boxUnit.quantity)
-						) {
-							if (parseInt(priceInput.value) < boxUnit.unitPrice) {
-								priceInput.value = boxUnit.unitPrice;
-							}
-							total -= itemTotal;
-							cellTotal.textContent =
-								parseInt(countInput.value) * parseInt(priceInput.value);
-							itemTotal = parseInt(cellTotal.textContent);
-							total += itemTotal;
-							totalPrice.textContent = total;
-							updateGlobal(
-								product,
-								boxUnit,
-								countInput.value,
-								priceInput.value
-							);
-							cellType.textContent = "box";
-							dropdown.disabled = true;
-							countInput.disabled = true;
-							priceInput.disabled = true;
-						} else if (
-							dropdown.value === "individual" &&
-							(individualUnit.quantity != 0 ||
-								boxUnit.quantity != 0 ||
-								parseInt(countInput.value) > individualUnit.quantity)
-						) {
-							if (parseInt(priceInput.value) < individualUnit.unitPrice) {
-								priceInput.value = individualUnit.unitPrice;
-							}
-							total -= itemTotal;
-							cellTotal.textContent =
-								parseInt(countInput.value) * parseInt(priceInput.value);
-							itemTotal = parseInt(cellTotal.textContent);
-							total += itemTotal;
-							totalPrice.textContent = total;
-							updateGlobal(
-								product,
-								individualUnit,
-								countInput.value,
-								priceInput.value
-							);
-							cellType.textContent = "individual";
-							dropdown.disabled = true;
-							countInput.disabled = true;
-							priceInput.disabled = true;
 						}
 					}
 				});
@@ -437,36 +342,29 @@ document.addEventListener("keydown", (event) => {
 
 				var cellPrice = row.insertCell(4);
 				const priceInput = document.createElement("input");
-				priceInput.value = bigBoxUnit.salePrice;
+				priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
 				cellPrice.appendChild(priceInput);
 
 				const cellType = row.insertCell(5);
 				const dropdown = document.createElement("select");
 
-				// Add options to the dropdown menu (replace 'optionValue' with your actual values)
-				const bigBox = document.createElement("option");
-				bigBox.value = "bigBox";
-				bigBox.textContent = "bigBox";
-				dropdown.appendChild(bigBox);
+				// Populate dropdown options dynamically
+				unitsOfSale.forEach((unit) => {
+					const option = document.createElement("option");
+					option.value = unit.name;
+					option.textContent = unit.name;
+					dropdown.appendChild(option);
+				});
 
-				const box = document.createElement("option");
-				box.value = "box";
-				box.textContent = "box";
-				dropdown.appendChild(box);
-
-				const individual = document.createElement("option");
-				individual.value = "individual";
-				individual.textContent = "individual";
-				dropdown.appendChild(individual);
 				dropdown.addEventListener("change", () => {
-					if (dropdown.value === "bigBox") {
-						priceInput.value = bigBoxUnit.salePrice;
-					} else if (dropdown.value === "box") {
-						priceInput.value = boxUnit.salePrice;
-					} else if (dropdown.value === "individual") {
-						priceInput.value = individualUnit.salePrice;
+					const selectedUnit = unitsOfSale.find(
+						(unit) => unit.name === dropdown.value
+					);
+					if (selectedUnit) {
+						priceInput.value = selectedUnit.salePrice;
 					}
 				});
+
 				cellType.appendChild(dropdown);
 
 				const cellName = row.insertCell(6);

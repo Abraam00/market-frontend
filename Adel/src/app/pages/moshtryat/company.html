@@ -1,60 +1,62 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>شركات</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="../../styles/moshtryat/company.css"
-    />
-  </head>
-  <body>
-    <div id="top">
-      <button id="backButton">ارجع</button>
-    </div>
+	<head>
+		<title>شركات</title>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="../../styles/moshtryat/company.css"
+		/>
+	</head>
+	<body>
+		<div id="top">
+			<button id="backButton">ارجع</button>
+		</div>
 
-    <div id="middle">
-      <h1 id="nameHeader"></h1>
-      <div class="dropdown">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="search..."
-          style="margin-left: 20px"
-        />
-        <ul id="dropdownList"></ul>
-      </div>
-    </div>
-    <div id="tax">
-      <input
-        type="text"
-        id="taxRateInput"
-        value="0.14"
-        style="margin-right: 2%"
-      />
-      <h2 taxRateHeader>:الضريبة المضافة</h2>
-    </div>
+		<div id="middle">
+			<h1 id="nameHeader"></h1>
+			<div class="dropdown">
+				<input
+					type="text"
+					id="searchInput"
+					placeholder="search..."
+					style="margin-left: 20px"
+				/>
+				<ul id="dropdownList"></ul>
+			</div>
+		</div>
+		<div id="tax">
+			<input
+				type="text"
+				id="taxRateInput"
+				value="0.14"
+				style="margin-right: 2%"
+			/>
+			<h2 taxRateHeader>:الضريبة المضافة</h2>
+		</div>
 
-    <table border="1">
-      <thead>
-        <tr>
-          <th>حذف</th>
-          <th>المجموع</th>
-          <th>الضريبة المضافة</th>
-          <th>العدد</th>
-          <th>سعر البيع</th>
-          <th>سعر الشراء</th>
-          <th>الوحدة</th>
-          <th>الاسم</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="bottom">
-      <h2>Total:</h2>
-      <h2 id="total"></h2>
-      <button id="payButton">Pay</button>
-    </div>
-    <script src="../../scripts/moshtryat/company.js"></script>
-  </body>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>حذف</th>
+					<th>المجموع</th>
+					<th>الوحدة فيها كام وحدة</th>
+					<th>الوحدة الاساسية</th>
+					<th>الضريبة المضافة</th>
+					<th>العدد</th>
+					<th>سعر البيع</th>
+					<th>سعر الشراء</th>
+					<th>الوحدة</th>
+					<th>الاسم</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		<div id="bottom">
+			<h2>Total:</h2>
+			<h2 id="total"></h2>
+			<button id="payButton">Pay</button>
+		</div>
+		<script src="../../scripts/moshtryat/company.js"></script>
+	</body>
 </html>

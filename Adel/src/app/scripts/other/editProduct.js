@@ -10,9 +10,13 @@ const unitPrice = document.getElementById("unit price");
 const salePrice = document.getElementById("sale price");
 const count = document.getElementById("count");
 const tax = document.getElementById("tax");
+const isMainUnit = document.getElementById("isMainUnit");
+const numberOfItemsPerUnit = document.getElementById("numberOfItemsPerUnit");
 
 function updateProduct() {
 	var isYes = tax.value === "yes";
+	var isMainUnitYes = isMainUnit.value === "yes";
+
 	const productData = {
 		name: name.value,
 		unitPrice: parseInt(unitPrice.value),
@@ -20,6 +24,8 @@ function updateProduct() {
 		quantity: parseInt(count.value),
 		isTaxable: isYes,
 		unitOfSaleName: unit.value,
+		isMainUnit: isMainUnitYes,
+		numberOfItemsPerUnit: parseInt(numberOfItemsPerUnit.value),
 	};
 
 	axios
@@ -44,6 +50,7 @@ function updateProduct() {
 	unitPrice.value = "";
 	salePrice.value = "";
 	count.value = "";
+	numberOfItemsPerUnit.value = "";
 }
 
 document

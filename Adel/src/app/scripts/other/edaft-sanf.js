@@ -10,9 +10,12 @@ const unitPrice = document.getElementById("unit price");
 const salePrice = document.getElementById("sale price");
 const count = document.getElementById("count");
 const tax = document.getElementById("tax");
+const isMainUnit = document.getElementById("isMainUnit");
+const numberOfItemsPerUnit = document.getElementById("numberOfItemsPerUnit");
 
 function createProduct() {
-	var isYes = tax.value === "yes";
+	var isTaxYes = tax.value === "yes";
+	var isMainUnitYes = isMainUnit.value === "yes";
 	const productData = {
 		serialNumber: serialNumber.value,
 		name: name.value,
@@ -20,7 +23,9 @@ function createProduct() {
 		unitPrice: parseInt(unitPrice.value),
 		salePrice: parseInt(salePrice.value),
 		quantity: parseInt(count.value),
-		isTaxable: isYes,
+		isTaxable: isTaxYes,
+		isMainUnit: isMainUnitYes,
+		numberOfItemsPerUnit: parseInt(numberOfItemsPerUnit.value),
 	};
 
 	axios
@@ -41,6 +46,7 @@ function createProduct() {
 	unitPrice.value = "";
 	salePrice.value = "";
 	count.value = "";
+	numberOfItemsPerUnit.value = "";
 }
 
 document
