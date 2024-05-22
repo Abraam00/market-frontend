@@ -1,0 +1,47 @@
+#backButton {
+    background-color: rgb(19, 158, 205); /* Light blue background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+  }
+  
+  /* CSS for button hover effect (optional) */
+  #backButton:hover {
+    background-color: blue; /* Darker blue background color on hover */
+  }
+
+  #productId{
+    margin-left: 45%;
+    margin-top: 1%;
+    width: 100px;
+    height: 60px;
+    margin-bottom: 4%;
+    font-size: larger;
+  }
+
+  #removeButton{
+    background-color: rgb(174, 84, 84);
+    color: white;
+    padding: 10px 20px; /* Padding to make the button bigger */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Change cursor to a hand when hovering */
+    margin-bottom: 10px;
+    width: 100px;
+    height: 60px;
+    font-size: larger;
+    margin-left: 45%;
+  }
+  #removeButton:hover {
+    background-color: rgb(255, 0, 0); /* Darker red background color on hover */
+  }
+
+  #productIdLabel{
+    margin-top: 10%;
+    margin-left: 45%;
+    font-size: x-large;
+  }

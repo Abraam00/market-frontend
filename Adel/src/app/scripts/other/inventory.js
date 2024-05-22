@@ -34,17 +34,11 @@ axios
 			const trHead = document.createElement("tr");
 			const thProductName = document.createElement("th");
 			const thProductId = document.createElement("th");
-			const thBigBox = document.createElement("th");
-			const thBox = document.createElement("th");
-			const thIndividual = document.createElement("th");
+			const thInfo = document.createElement("th");
 			thProductName.textContent = "اسم الصنف";
 			thProductId.textContent = "رقم الصنف";
-			thBigBox.textContent = "كرتونة";
-			thBox.textContent = "علبة";
-			thIndividual.textContent = "واحدة";
-			trHead.appendChild(thIndividual);
-			trHead.appendChild(thBox);
-			trHead.appendChild(thBigBox);
+			thInfo.textContent = "كميات";
+			trHead.appendChild(thInfo);
 			trHead.appendChild(thProductId);
 			trHead.appendChild(thProductName);
 
@@ -57,25 +51,15 @@ axios
 				const tr = document.createElement("tr");
 				const tdProductName = document.createElement("td");
 				const tdProductId = document.createElement("td");
-				const tdBigBox = document.createElement("td");
-				const tdBox = document.createElement("td");
-				const tdIndividual = document.createElement("td");
-				const bigBoxUnit = product.unitsOfSale.find(
-					(unit) => unit.name === "bigBox"
-				);
-				const boxUnit = product.unitsOfSale.find((unit) => unit.name === "box");
-				const individualUnit = product.unitsOfSale.find(
-					(unit) => unit.name === "individual"
-				);
-				tdBigBox.textContent = bigBoxUnit.quantity;
-				tdBox.textContent = boxUnit.quantity;
-				tdIndividual.textContent = individualUnit.quantity;
+				var info = document.createElement("td");
+				const unitsOfSale = [];
+				product.unitsOfSale.forEach((u) => unitsOfSale.push(u));
+				unitsOfSale.forEach((unit) => {
+					info.textContent += unit.quantity + " " + unit.name + " --- ";
+					tr.appendChild(info);
+				});
 				tdProductName.textContent = product.name;
 				tdProductId.textContent = product.productId;
-
-				tr.appendChild(tdIndividual);
-				tr.appendChild(tdBox);
-				tr.appendChild(tdBigBox);
 				tr.appendChild(tdProductId);
 				tr.appendChild(tdProductName);
 				tbody.appendChild(tr);

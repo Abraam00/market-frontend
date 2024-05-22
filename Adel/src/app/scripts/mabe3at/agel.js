@@ -23,7 +23,7 @@ axios
 			const filteredCustomers = customers.filter(
 				(customer) =>
 					customer.name.toLowerCase().includes(searchTerm) ||
-					customer.customerNumber.toLowerCase().includes(searchTerm)
+					customer.customerId.toLowerCase().includes(searchTerm)
 			);
 			renderButtons(filteredCustomers);
 		});
@@ -40,7 +40,7 @@ function renderButtons(customersToRender) {
 	customersToRender.forEach((customer) => {
 		const button = document.createElement("button");
 		button.className = "big-button";
-		button.textContent = customer.name + "-" + customer.customerNumber;
+		button.textContent = customer.name + "-" + customer.customerId;
 
 		button.addEventListener("click", () => {
 			// Construct the URL with the name as a query parameter

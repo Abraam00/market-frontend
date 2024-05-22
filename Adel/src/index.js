@@ -80,6 +80,10 @@ const createWindow = () => {
 			mainWindow.loadFile(
 				path.join(__dirname, "./app/pages/other/inventory.html")
 			);
+		} else if (page === "removeProduct") {
+			mainWindow.loadFile(
+				path.join(__dirname, "./app/pages/other/removeProduct.html")
+			);
 		}
 	});
 };

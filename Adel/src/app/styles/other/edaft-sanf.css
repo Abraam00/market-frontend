@@ -33,16 +33,17 @@ input {
   box-sizing: border-box;
 }
 
-button {
+#saveButton {
   background-color: rgb(19, 158, 205); /* Light blue background color */
   color: white;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-left: 45%;
 }
 
-button:hover {
+#saveButton:hover {
   background-color: blue; /* Darker blue background color on hover */
 }
 
@@ -51,4 +52,26 @@ select{
   padding: 8px;
   margin-bottom: 10px;
   box-sizing: border-box;
+}
+#insertButton{
+  background-color: rgb(19, 158, 205); /* Light blue background color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 45%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+#insertButton:hover {
+  background-color: blue; /* Darker blue background color on hover */
+}
+
+.line{
+  width: 100%;
+  background-color: black;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  height: 2px;
 }

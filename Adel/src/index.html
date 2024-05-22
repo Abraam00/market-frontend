@@ -19,6 +19,7 @@
 			<button id="editProduct">تعديل صنف</button>
 			<button id="customerPayOff">تسديد مستحقات</button>
 			<button id="inventory">جرد</button>
+			<button id="removeProduct">ازالة صنف</button>
 		</div>
 		<script>
 			const { ipcRenderer } = require("electron");
@@ -77,6 +78,9 @@
 				});
 			document.getElementById("inventory").addEventListener("click", () => {
 				navigateToPage("inventory");
+			});
+			document.getElementById("removeProduct").addEventListener("click", () => {
+				navigateToPage("removeProduct");
 			});
 		</script>
 	</body>
