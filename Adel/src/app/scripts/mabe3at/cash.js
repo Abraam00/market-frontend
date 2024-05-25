@@ -311,6 +311,7 @@ document.addEventListener("keydown", (event) => {
 						if (selectedUnit) {
 							const quantity = selectedUnit.quantity;
 							const unitPrice = selectedUnit.unitPrice;
+							console.log(quantity);
 
 							if (quantity != 0 && !parseInt(countInput.value) > quantity) {
 								if (parseInt(priceInput.value) < unitPrice) {

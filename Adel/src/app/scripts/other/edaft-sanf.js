@@ -164,3 +164,15 @@ addButton.addEventListener("click", () => {
 		numberOfItemsPerUnit: parseInt(addedQuantityPerUnit),
 	});
 });
+
+let scannedBarcode = "";
+
+document.addEventListener("keydown", (event) => {
+	// Check if the key pressed is a valid barcode character
+	if (event.key.length === 1) {
+		// Concatenate the scanned digit to the barcode string
+		scannedBarcode += event.key;
+	} else if (event.key === "Enter") {
+		serialNumber.value = scannedBarcode;
+	}
+});

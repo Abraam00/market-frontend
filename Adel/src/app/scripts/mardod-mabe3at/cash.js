@@ -312,6 +312,7 @@ document.addEventListener("keydown", (event) => {
 							(unit) => unit.name === dropdown.value
 						);
 						if (selectedUnit) {
+							const quantity = selectedUnit.quantity;
 							const unitPrice = selectedUnit.unitPrice;
 
 							if (parseInt(priceInput.value) < unitPrice) {
