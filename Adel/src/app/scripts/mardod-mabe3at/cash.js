@@ -7,7 +7,9 @@ const GlobalState = {
 //getting all product names on page load
 let productNames;
 axios
-	.get("https://localhost:7163/api/Product/GetAllProductsNames")
+	.get(
+		"https://marketbackend.azurewebsites.net/api/Product/GetAllProductsNames"
+	)
 	.then((response) => {
 		productNames = response.data;
 	})
@@ -97,7 +99,9 @@ let total = 0;
 //getting the full product then populating the table using the populate table function based off of the selected unit
 function getProduct(query) {
 	axios
-		.get(`https://localhost:7163/api/Product/GetProductByName/${query}`)
+		.get(
+			`https://marketbackend.azurewebsites.net/api/Product/GetProductByName/${query}`
+		)
 		.then((response) => {
 			const product = response.data;
 			const unitsOfSale = [];
@@ -221,7 +225,7 @@ function returnOrder(orderId) {
 	if (orderId === "") {
 		axios
 			.post(
-				"https://localhost:7163/api/Order/returnOrderItemsWithoutOrderNumber",
+				"https://marketbackend.azurewebsites.net/api/Order/returnOrderItemsWithoutOrderNumber",
 				GlobalState.orderItems
 			)
 			.then((response) => {
@@ -237,7 +241,7 @@ function returnOrder(orderId) {
 		let id = parseInt(orderId);
 		axios
 			.put(
-				`https://localhost:7163/api/Order/returnOrderItems/${id}`,
+				`https://marketbackend.azurewebsites.net/api/Order/returnOrderItems/${id}`,
 				GlobalState.orderItems
 			)
 			.then((response) => {
@@ -269,7 +273,7 @@ document.addEventListener("keydown", (event) => {
 	} else if (event.key === "Enter") {
 		axios
 			.get(
-				`https://localhost:7163/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
+				`https://marketbackend.azurewebsites.net/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
 			)
 			.then((response) => {
 				const product = response.data;

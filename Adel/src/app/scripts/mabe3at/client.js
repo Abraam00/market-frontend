@@ -4,7 +4,9 @@ const taxRateInput = document.getElementById("taxRateInput");
 //getting all product names on page load
 let productNames;
 axios
-	.get("https://localhost:7163/api/Product/GetAllProductsNames")
+	.get(
+		"https://marketbackend.azurewebsites.net/api/Product/GetAllProductsNames"
+	)
 	.then((response) => {
 		productNames = response.data;
 	})
@@ -34,7 +36,7 @@ let customer;
 let moneyRemaining;
 axios
 	.get(
-		`https://localhost:7163/api/Customer/GetCustomer?customerNumber=${customerNumber}`
+		`https://marketbackend.azurewebsites.net/api/Customer/GetCustomer?customerNumber=${customerNumber}`
 	)
 	.then((response) => {
 		customer = response.data;
@@ -136,7 +138,9 @@ let total = 0;
 //getting the full product then populating the table using the populate table function based off of the selected unit
 function getProduct(query) {
 	axios
-		.get(`https://localhost:7163/api/Product/GetProductByName/${query}`)
+		.get(
+			`https://marketbackend.azurewebsites.net/api/Product/GetProductByName/${query}`
+		)
 		.then((response) => {
 			const product = response.data;
 			const unitsOfSale = [];
@@ -181,7 +185,7 @@ function getProduct(query) {
 						const quantity = selectedUnit.quantity;
 						const unitPrice = selectedUnit.unitPrice;
 
-						if (quantity != 0 && !parseInt(countInput.value) > quantity) {
+						if (quantity != 0 && !(parseInt(countInput.value) > quantity)) {
 							if (parseInt(priceInput.value) < unitPrice) {
 								priceInput.value = unitPrice;
 							}
@@ -246,7 +250,7 @@ function getProduct(query) {
 }
 function updateCustomer(name, customerNumber, moneyRemaining) {
 	axios.put(
-		`https://localhost:7163/api/Customer/UpdateCustomer/${customerId}`,
+		`https://marketbackend.azurewebsites.net/api/Customer/UpdateCustomer/${customerId}`,
 		{
 			name: name,
 			customerNumber: customerNumber,
@@ -257,7 +261,7 @@ function updateCustomer(name, customerNumber, moneyRemaining) {
 
 function createOrder(customerId, moneyPaid) {
 	axios
-		.post("https://localhost:7163/api/Order/CreateOrder", {
+		.post("https://marketbackend.azurewebsites.net/api/Order/CreateOrder", {
 			customerId: customerId,
 			orderItems: GlobalState.orderItems,
 			paymentType: "agel",
@@ -315,7 +319,7 @@ document.addEventListener("keydown", (event) => {
 	} else if (event.key === "Enter") {
 		axios
 			.get(
-				`https://localhost:7163/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
+				`https://marketbackend.azurewebsites.net/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
 			)
 			.then((response) => {
 				const product = response.data;
@@ -361,7 +365,7 @@ document.addEventListener("keydown", (event) => {
 							const quantity = selectedUnit.quantity;
 							const unitPrice = selectedUnit.unitPrice;
 
-							if (quantity != 0 && !parseInt(countInput.value) > quantity) {
+							if (quantity != 0 && !(parseInt(countInput.value) > quantity)) {
 								if (parseInt(priceInput.value) < unitPrice) {
 									priceInput.value = unitPrice;
 								}

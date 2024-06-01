@@ -10,7 +10,7 @@ const buttonContainer = document.getElementById("buttonContainer");
 let customers;
 
 axios
-	.get("https://localhost:7163/api/Customer/GetAllCustomers")
+	.get("https://marketbackend.azurewebsites.net/api/Customer/GetAllCustomers")
 	.then((response) => {
 		customers = response.data;
 		// Create buttons dynamically based on the names

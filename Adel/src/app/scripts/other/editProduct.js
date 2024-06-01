@@ -30,7 +30,7 @@ function updateProduct() {
 
 	axios
 		.put(
-			`https://localhost:7163/api/Product/UpdateProduct?productId=${parseInt(
+			`https://marketbackend.azurewebsites.net/api/Product/UpdateProduct?productId=${parseInt(
 				productId.value
 			)}`,
 			productData

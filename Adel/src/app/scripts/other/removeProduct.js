@@ -10,7 +10,9 @@ const productIdInput = document.getElementById("productId");
 removeButton.addEventListener("click", () => {
 	const productId = parseInt(productIdInput.value);
 	axios
-		.delete(`https://localhost:7163/api/Product/DeleteProduct/${productId}`)
+		.delete(
+			`https://marketbackend.azurewebsites.net/api/Product/DeleteProduct/${productId}`
+		)
 		.then((response) => {
 			alert("Product removed successfully");
 			productIdInput.value = "";

@@ -34,7 +34,7 @@ payButton.addEventListener("click", () => {
 
 		axios
 			.put(
-				`https://localhost:7163/api/Customer/UpdateMoneyRemaining/${parseInt(
+				`https://marketbackend.azurewebsites.net/api/Customer/UpdateMoneyRemaining/${parseInt(
 					customerId
 				)}/${parseInt(amountPaid)}`
 			)

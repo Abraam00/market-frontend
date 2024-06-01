@@ -19,7 +19,7 @@ let orders;
 
 axios
 	.get(
-		`https://localhost:7163/api/Order/getOrderByDateRangeWithProductId?productId=${productId}&StartDate=${startDate}&EndDate=${endDate}`
+		`https://marketbackend.azurewebsites.net/api/Order/getOrderByDateRangeWithProductId?productId=${productId}&StartDate=${startDate}&EndDate=${endDate}`
 	)
 	.then((response) => {
 		orders = response.data;
@@ -74,10 +74,10 @@ axios
 				tdName.textContent = item.productName;
 				tdDate.textContent = formatDate(order.orderDate);
 				tdUnitType.textContent = item.unitType;
-				tdUnitPrice.textContent = item.unitPrice;
+				tdUnitPrice.textContent = item.priceAfterTax;
 				tdQuantity.textContent = item.quantity;
 				tdQuantityAtTime.textContent = item.quantitySnapShot;
-				tdTotal.textContent = item.quantity * item.unitPrice;
+				tdTotal.textContent = item.quantity * item.priceAfterTax;
 
 				trBody.appendChild(tdTotal);
 				trBody.appendChild(tdQuantityAtTime);

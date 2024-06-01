@@ -14,7 +14,10 @@ function saveCustomer() {
 	};
 
 	axios
-		.post("https://localhost:7163/api/Company/CreateCompany", customerData)
+		.post(
+			"https://marketbackend.azurewebsites.net/api/Company/CreateCompany",
+			customerData
+		)
 		.then((response) => {
 			console.log("Customer saved successfully:", response.data);
 			// Handle success

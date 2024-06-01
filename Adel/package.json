@@ -11,6 +11,9 @@
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
+  "config": {
+    "forge": "forge.config.js"
+  },
   "keywords": [],
   "author": {
     "name": "Abraam00",

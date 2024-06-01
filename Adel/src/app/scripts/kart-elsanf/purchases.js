@@ -18,7 +18,7 @@ let purchases;
 
 axios
 	.get(
-		`https://localhost:7163/api/Purchase/GetPurchasesByDateRangeWithProductId?productId=${productId}&StartDate=${startDate}&EndDate=${endDate}`
+		`https://marketbackend.azurewebsites.net/api/Purchase/GetPurchasesByDateRangeWithProductId?productId=${productId}&StartDate=${startDate}&EndDate=${endDate}`
 	)
 	.then((response) => {
 		purchases = response.data;

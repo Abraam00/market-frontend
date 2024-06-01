@@ -10,7 +10,9 @@ let currentPage = 1;
 const purchasesPerPage = 5; // Change this value to adjust the number of purchases per page
 
 axios
-	.get("https://localhost:7163/api/Purchase/GetAllPurchasesWithTaxableProducts")
+	.get(
+		"https://marketbackend.azurewebsites.net/api/Purchase/GetAllPurchasesWithTaxableProducts"
+	)
 	.then((response) => {
 		purchases = response.data;
 

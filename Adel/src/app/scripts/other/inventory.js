@@ -10,7 +10,7 @@ let currentPage = 1;
 const productsPerPage = 3;
 
 axios
-	.get("https://localhost:7163/api/Product/GetAllProducts")
+	.get("https://marketbackend.azurewebsites.net/api/Product/GetAllProducts")
 	.then((response) => {
 		products = response.data;
 

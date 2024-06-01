@@ -12,7 +12,9 @@ const GlobalState = {
 //getting all product names on page load
 let productNames;
 axios
-	.get("https://localhost:7163/api/Product/GetAllProductsNames")
+	.get(
+		"https://marketbackend.azurewebsites.net/api/Product/GetAllProductsNames"
+	)
 	.then((response) => {
 		productNames = response.data;
 	})
@@ -104,7 +106,9 @@ let total = 0;
 //getting the full product then populating the table using the populate table function based off of the selected unit
 function getProduct(query) {
 	axios
-		.get(`https://localhost:7163/api/Product/GetProductByName/${query}`)
+		.get(
+			`https://marketbackend.azurewebsites.net/api/Product/GetProductByName/${query}`
+		)
 		.then((response) => {
 			const product = response.data;
 			const unitsOfSale = [];
@@ -148,9 +152,8 @@ function getProduct(query) {
 					if (selectedUnit) {
 						const quantity = selectedUnit.quantity;
 						const unitPrice = selectedUnit.unitPrice;
-						console.log(quantity);
 
-						if (quantity != 0 && !parseInt(countInput.value) > quantity) {
+						if (quantity != 0 && !(parseInt(countInput.value) > quantity)) {
 							if (parseInt(priceInput.value) < unitPrice) {
 								priceInput.value = unitPrice;
 							}
@@ -171,6 +174,7 @@ function getProduct(query) {
 							countInput.disabled = true;
 							priceInput.disabled = true;
 						} else {
+							console.log("count: " + countInput.value);
 							alert("معندكش كفاية");
 						}
 					}
@@ -237,7 +241,7 @@ payButton.addEventListener("click", () => {
 function createOrder(moneyPaid) {
 	console.log(GlobalState.orderItems);
 	axios
-		.post("https://localhost:7163/api/Order/CreateOrder", {
+		.post("https://marketbackend.azurewebsites.net/api/Order/CreateOrder", {
 			customerId: null,
 			orderItems: GlobalState.orderItems,
 			paymentType: "cash",
@@ -266,7 +270,7 @@ document.addEventListener("keydown", (event) => {
 	} else if (event.key === "Enter") {
 		axios
 			.get(
-				`https://localhost:7163/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
+				`https://marketbackend.azurewebsites.net/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
 			)
 			.then((response) => {
 				const product = response.data;
@@ -313,7 +317,7 @@ document.addEventListener("keydown", (event) => {
 							const unitPrice = selectedUnit.unitPrice;
 							console.log(quantity);
 
-							if (quantity != 0 && !parseInt(countInput.value) > quantity) {
+							if (quantity != 0 && !(parseInt(countInput.value) > quantity)) {
 								if (parseInt(priceInput.value) < unitPrice) {
 									priceInput.value = unitPrice;
 								}

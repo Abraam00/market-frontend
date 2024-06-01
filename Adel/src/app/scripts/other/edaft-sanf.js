@@ -15,57 +15,78 @@ const isMainUnit = document.getElementById("isMainUnit");
 const numberOfItemsPerUnit = document.getElementById("numberOfItemsPerUnit");
 const addButton = document.getElementById("insertButton");
 const saveButton = document.getElementById("saveButton");
+const container = document.getElementById("inputsContainer");
+let unitSetCount = 0;
 
-let unitOfSaleDataArray = []; // Array to store unit of sale data
+function createUnitSet() {
+	unitSetCount++;
+	const unitSet = document.createElement("div");
+	unitSet.id = `unitSet${unitSetCount}`;
 
-addButton.addEventListener("click", () => {
-	const container = document.getElementById("inputsContainer");
+	unitSet.innerHTML = `
+		<hr style="border: 1px solid black;">
+        <input type="text" id="unit${unitSetCount}" placeholder="Unit">
+        <input type="text" id="unitPrice${unitSetCount}" placeholder="Unit Price">
+        <input type="text" id="salePrice${unitSetCount}" placeholder="Sale Price">
+        <input type="text" id="quantity${unitSetCount}" placeholder="Quantity">
+        <input type="text" id="numberOfItemsPerUnit${unitSetCount}" placeholder="Number of Items per Unit">
+        <label for="isMainUnit${unitSetCount}">Is Main Unit:</label>
+            <select id="isMainUnit${unitSetCount}">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+            <label for="isTaxable${unitSetCount}">Is Taxable:</label>
+            <select id="isTaxable${unitSetCount}">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+		<hr style="border: 1px solid black;">
+    `;
 
-	const wrapper = document.createElement("div");
-	wrapper.classList.add("input-wrapper");
+	container.appendChild(unitSet);
+}
+addButton.addEventListener("click", createUnitSet);
 
-	const line = document.createElement("div");
-	line.className = "line";
-	wrapper.appendChild(line);
+function getUnitSetData(setIndex, name) {
+	const unitOfSaleName = document.getElementById(`unit${setIndex}`).value;
+	const unitPrice = parseInt(
+		document.getElementById(`unitPrice${setIndex}`).value
+	);
+	const salePrice = parseInt(
+		document.getElementById(`salePrice${setIndex}`).value
+	);
+	const quantity = parseInt(
+		document.getElementById(`quantity${setIndex}`).value
+	);
+	const numberOfItemsPerUnit = parseInt(
+		document.getElementById(`numberOfItemsPerUnit${setIndex}`).value
+	);
+	const isMainUnit =
+		document.getElementById(`isMainUnit${setIndex}`).value === "yes";
+	const isTaxable =
+		document.getElementById(`isTaxable${setIndex}`).value === "yes";
 
-	const addedUnitOfSale = document.createElement("input");
-	addedUnitOfSale.type = "text";
-	addedUnitOfSale.placeholder = "unit of sale name";
-	wrapper.appendChild(addedUnitOfSale);
+	return {
+		name,
+		unitOfSaleName,
+		unitPrice,
+		salePrice,
+		quantity,
+		numberOfItemsPerUnit,
+		isMainUnit,
+		isTaxable,
+	};
+}
 
-	const addedUnitPrice = document.createElement("input");
-	addedUnitPrice.type = "text";
-	addedUnitPrice.placeholder = "unit price";
-	wrapper.appendChild(addedUnitPrice);
-
-	const addedSalePrice = document.createElement("input");
-	addedSalePrice.type = "text";
-	addedSalePrice.placeholder = "sale price";
-	wrapper.appendChild(addedSalePrice);
-
-	const addedQuantity = document.createElement("input");
-	addedQuantity.type = "text";
-	addedQuantity.placeholder = "quantity";
-	wrapper.appendChild(addedQuantity);
-
-	const addedIsMainUnit = document.createElement("select");
-	const option1 = document.createElement("option");
-	option1.text = "نعم";
-	option1.value = "yes";
-	const option2 = document.createElement("option");
-	option2.text = "لا";
-	option2.value = "no";
-	addedIsMainUnit.appendChild(option1);
-	addedIsMainUnit.appendChild(option2);
-	wrapper.appendChild(addedIsMainUnit);
-
-	const addedQuantityPerUnit = document.createElement("input");
-	addedQuantityPerUnit.type = "text";
-	addedQuantityPerUnit.placeholder = "quantity per unit";
-	wrapper.appendChild(addedQuantityPerUnit);
-
-	container.appendChild(wrapper);
-});
+function clearUnitSetFields(setIndex) {
+	document.getElementById(`unit${setIndex}`).value = "";
+	document.getElementById(`unitPrice${setIndex}`).value = "";
+	document.getElementById(`salePrice${setIndex}`).value = "";
+	document.getElementById(`quantity${setIndex}`).value = "";
+	document.getElementById(`numberOfItemsPerUnit${setIndex}`).value = "";
+	document.getElementById(`isMainUnit${setIndex}`).value = "yes";
+	document.getElementById(`isTaxable${setIndex}`).value = "yes";
+}
 
 function createProduct() {
 	const isTaxYes = tax.value === "yes";
@@ -83,43 +104,37 @@ function createProduct() {
 		numberOfItemsPerUnit: parseInt(numberOfItemsPerUnit.value),
 	};
 
+	const productName = name.value;
 	axios
-		.post("https://localhost:7163/api/Product/CreateProduct", productData)
+		.post(
+			"https://marketbackend.azurewebsites.net/api/Product/CreateProduct",
+			productData
+		)
 		.then((response) => {
 			console.log("Product saved successfully:", response.data);
-
-			unitOfSaleDataArray.forEach((unitOfSaleData, index) => {
-				const productId = response.data.productId;
-				const unitOfSaleDataToSend = {
-					name: name.value,
-					unitPrice: parseInt(unitOfSaleData.unitPrice),
-					salePrice: parseInt(unitOfSaleData.salePrice),
-					quantity: parseInt(unitOfSaleData.quantity),
-					isTaxable: isTaxYes,
-					unitOfSaleName: unitOfSaleData.name,
-					isMainUnit: false,
-					numberOfItemsPerUnit: parseInt(unitOfSaleData.numberOfItemsPerUnit),
-				};
+			for (let i = 1; i <= unitSetCount; i++) {
+				const unitData = getUnitSetData(i, productName);
 
 				axios
 					.put(
-						`https://localhost:7163/api/Product/UpdateProduct?productId=${productId}`,
-						unitOfSaleDataToSend
+						`https://marketbackend.azurewebsites.net/api/Product/UpdateProduct?productId=${parseInt(
+							response.data.productId
+						)}`,
+						unitData
 					)
 					.then((response) => {
-						console.log("Unit of sale saved successfully:", response.data);
+						console.log(`Product ${i} saved successfully:`, response.data);
+						clearUnitSetFields(i);
 					})
 					.catch((error) => {
-						console.error("Error saving unit of sale:", error);
-						// Handle error
+						console.error(`Error saving product ${i}:`, error);
 					});
-			});
+			}
 		})
 		.catch((error) => {
 			console.error("Error saving product:", error);
 			// Handle error
 		});
-
 	// Clear product input fields
 	serialNumber.value = "";
 	name.value = "";
@@ -133,36 +148,6 @@ function createProduct() {
 // Event listener for the Save button
 saveButton.addEventListener("click", () => {
 	createProduct();
-});
-
-// Event listener for the Add button
-addButton.addEventListener("click", () => {
-	const addedUnitOfSale = document.querySelector(
-		'input[placeholder="unit of sale name"]'
-	);
-	const addedUnitPrice = document.querySelector(
-		'input[placeholder="unit price"]'
-	);
-	const addedSalePrice = document.querySelector(
-		'input[placeholder="sale price"]'
-	);
-	const addedQuantity = document.querySelector('input[placeholder="quantity"]');
-	const addedIsMainUnit = document.querySelector("select");
-	const addedQuantityPerUnit = document.querySelector(
-		'input[placeholder="quantity per unit"]'
-	);
-
-	// Add unit of sale data to array
-	unitOfSaleDataArray.push({
-		name: name.value,
-		unitPrice: parseInt(addedUnitPrice.value),
-		salePrice: parseInt(addedSalePrice.value),
-		quantity: parseInt(addedQuantity.value),
-		isTaxable: isTaxYes,
-		unitOfSaleName: addedUnitOfSale.value,
-		isMainUnit: false,
-		numberOfItemsPerUnit: parseInt(addedQuantityPerUnit),
-	});
 });
 
 let scannedBarcode = "";

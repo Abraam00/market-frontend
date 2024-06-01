@@ -3,7 +3,9 @@ const axios = require("axios");
 //getting all product names on page load
 let productNames;
 axios
-	.get("https://localhost:7163/api/Product/GetAllProductsNames")
+	.get(
+		"https://marketbackend.azurewebsites.net/api/Product/GetAllProductsNames"
+	)
 	.then((response) => {
 		productNames = response.data;
 	})
@@ -121,7 +123,9 @@ let total = 0;
 //getting the full product then populating the table using the populate table function based off of the selected unit
 function getProduct(query) {
 	axios
-		.get(`https://localhost:7163/api/Product/GetProductByName/${query}`)
+		.get(
+			`https://marketbackend.azurewebsites.net/api/Product/GetProductByName/${query}`
+		)
 		.then((response) => {
 			const product = response.data;
 			const unitsOfSale = [];
@@ -190,7 +194,7 @@ function getProduct(query) {
 
 			var cellPrice = row.insertCell(3);
 			const priceInput = document.createElement("input");
-			priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
+			priceInput.value = unitsOfSale[0].unitPrice;
 			cellPrice.appendChild(priceInput);
 
 			const cellType = row.insertCell(4);
@@ -227,7 +231,7 @@ function returnPurchase(purchaseId) {
 	console.log(GlobalState.orderItems);
 	axios
 		.put(
-			`https://localhost:7163/api/Purchase/ReturnPurchaseItems/?purchaseId=${purchaseId}`,
+			`https://marketbackend.azurewebsites.net/api/Purchase/ReturnPurchaseItems/?purchaseId=${purchaseId}`,
 			GlobalState.orderItems
 		)
 		.then((response) => {
@@ -266,7 +270,7 @@ document.addEventListener("keydown", (event) => {
 	} else if (event.key === "Enter") {
 		axios
 			.get(
-				`https://localhost:7163/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
+				`https://marketbackend.azurewebsites.net/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
 			)
 			.then((response) => {
 				const product = response.data;
@@ -336,7 +340,7 @@ document.addEventListener("keydown", (event) => {
 
 				var cellPrice = row.insertCell(3);
 				const priceInput = document.createElement("input");
-				priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
+				priceInput.value = unitsOfSale[0].unitPrice;
 				cellPrice.appendChild(priceInput);
 
 				const cellType = row.insertCell(4);
