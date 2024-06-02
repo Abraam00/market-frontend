@@ -1,65 +1,92 @@
 const axios = require("axios");
+
+// API Endpoints
+const apiEndpoints = {
+	getAllProductNames:
+		"https://marketbackend.azurewebsites.net/api/Product/GetAllProductsNames",
+	getCustomer: (customerNumber) =>
+		`https://marketbackend.azurewebsites.net/api/Customer/GetCustomer?customerNumber=${customerNumber}`,
+	getProductByName: (query) =>
+		`https://marketbackend.azurewebsites.net/api/Product/GetProductByName/${query}`,
+	getProductBySerial: (serial) =>
+		`https://marketbackend.azurewebsites.net/api/Product/GetProductBy?serialNumber=${serial}`,
+	createOrder: "https://marketbackend.azurewebsites.net/api/Order/CreateOrder",
+	updateCustomer: (customerId) =>
+		`https://marketbackend.azurewebsites.net/api/Customer/UpdateCustomer/${customerId}`,
+};
+
+// Global State
+const GlobalState = {
+	orderItems: [],
+};
+
+// DOM Elements
+const table = document.querySelector("table");
+const tbody = table.querySelector("tbody");
+const totalPrice = document.getElementById("total");
+const payButton = document.getElementById("payButton");
+const paidAmount = document.getElementById("payInput");
 const taxRateInput = document.getElementById("taxRateInput");
+const productSearch = document.getElementById("searchInput");
+const nameHeader = document.getElementById("nameHeader");
+const madyonya = document.getElementById("madyonya");
 
-//getting all product names on page load
-let productNames;
-axios
-	.get(
-		"https://marketbackend.azurewebsites.net/api/Product/GetAllProductsNames"
-	)
-	.then((response) => {
-		productNames = response.data;
-	})
-	.catch((error) => {
-		console.error("Error fetching data:", error);
-	});
+// Variables
+let productNames = [];
+let customer;
+let moneyRemaining;
+let itemTotal = 0;
+let total = 0;
+let scannedBarcode = "";
 
-document.getElementById("backButton").addEventListener("click", () => {
-	window.history.back();
-});
+// Initialize
+initializePage();
 
-// Function to get the query parameter from the URL
+// Event Listeners
+document
+	.getElementById("backButton")
+	.addEventListener("click", () => window.history.back());
+productSearch.addEventListener("input", updateDropdown);
+document.addEventListener("click", closeDropdownOnClickOutside);
+payButton.addEventListener("click", handlePayment);
+document.addEventListener("keydown", handleBarcodeInput);
+
+// Functions
+function initializePage() {
+	const name = getQueryParam("name");
+	const customerNumber = getQueryParam("customerNumber");
+
+	nameHeader.textContent = "اسم العميل: " + name;
+
+	axios
+		.get(apiEndpoints.getAllProductNames)
+		.then((response) => (productNames = response.data))
+		.catch((error) => console.error("Error fetching data:", error));
+
+	axios
+		.get(apiEndpoints.getCustomer(customerNumber))
+		.then((response) => {
+			customer = response.data;
+			moneyRemaining = customer.moneyRemaining;
+			madyonya.textContent = moneyRemaining;
+		})
+		.catch((error) => console.error("Error fetching data:", error));
+}
+
 function getQueryParam(param) {
 	const urlParams = new URLSearchParams(window.location.search);
 	return urlParams.get(param);
 }
-
-// Get the name query parameter from the URL
-const name = getQueryParam("name");
-const customerId = getQueryParam("customerId");
-const customerNumber = getQueryParam("customerNumber");
-const nameHeader = document.getElementById("nameHeader");
-const madyonya = document.getElementById("madyonya");
-nameHeader.textContent = "اسم العميل: " + name;
-
-let customer;
-let moneyRemaining;
-axios
-	.get(
-		`https://marketbackend.azurewebsites.net/api/Customer/GetCustomer?customerNumber=${customerNumber}`
-	)
-	.then((response) => {
-		customer = response.data;
-		moneyRemaining = customer.moneyRemaining;
-		madyonya.textContent = moneyRemaining;
-	})
-	.catch((error) => {
-		console.error("Error fetching data:", error);
-	});
-
-const productSearch = document.getElementById("searchInput");
-productSearch.addEventListener("input", updateDropdown);
 
 function updateDropdown() {
 	const searchTerm = productSearch.value.toLowerCase();
 	const filteredItems = productNames.filter((item) =>
 		item.toLowerCase().includes(searchTerm)
 	);
+	const dropdownList = document.getElementById("dropdownList");
 
-	// Clear previous list items
 	dropdownList.innerHTML = "";
 
-	// Add filtered items to the dropdown
 	filteredItems.forEach((item) => {
 		const li = document.createElement("li");
 		li.textContent = item;
@@ -71,232 +98,41 @@ function updateDropdown() {
 		dropdownList.appendChild(li);
 	});
 
-	// Show or hide the dropdown based on the number of filtered items
-	if (filteredItems.length > 0) {
-		dropdownList.style.display = "block";
-	} else {
-		dropdownList.style.display = "none";
-	}
+	dropdownList.style.display = filteredItems.length > 0 ? "block" : "none";
 }
 
-// Close the dropdown when clicking outside the input or list
-document.addEventListener("click", (event) => {
+function closeDropdownOnClickOutside(event) {
 	if (
 		!event.target.matches("#searchInput") &&
 		!event.target.matches("#dropdownList li")
 	) {
-		dropdownList.style.display = "none";
-	}
-});
-
-const GlobalState = {
-	orderItems: [],
-};
-
-const table = document.querySelector("table");
-const tbody = table.querySelector("tbody");
-const totalPrice = document.getElementById("total");
-const payButton = document.getElementById("payButton");
-const paidAmount = document.getElementById("payInput");
-
-function removeFromGlobal(productId, unitOfSale) {
-	const index = GlobalState.orderItems.findIndex((existingItem) => {
-		return (
-			existingItem.productId === parseInt(productId) &&
-			existingItem.unitType === unitOfSale
-		);
-	});
-
-	if (index > -1) {
-		// Item with the same productId found, remove it
-		GlobalState.orderItems.splice(index, 1);
+		document.getElementById("dropdownList").style.display = "none";
 	}
 }
-function updateGlobal(item, unitOfSale, count, salePrice) {
-	let orderItem = {
-		productId: item.productId,
-		quantity: parseInt(count),
-		unitType: unitOfSale.name,
-		salePrice: parseInt(salePrice),
-	};
 
-	const index = GlobalState.orderItems.findIndex((existingItem) => {
-		existingItem.productId === orderItem.productId &&
-			existingItem.unitType === orderItem.unitType;
-	});
+function handlePayment() {
+	const moneyBack =
+		parseInt(paidAmount.value) - parseInt(totalPrice.textContent);
 
-	if (index > -1) {
-		// Item with the same productId found, remove it
-		GlobalState.orderItems.splice(index, 1);
-	}
-
-	GlobalState.orderItems.push(orderItem);
-}
-
-let itemTotal = 0;
-let total = 0;
-//getting the full product then populating the table using the populate table function based off of the selected unit
-function getProduct(query) {
-	axios
-		.get(
-			`https://marketbackend.azurewebsites.net/api/Product/GetProductByName/${query}`
-		)
-		.then((response) => {
-			const product = response.data;
-			const unitsOfSale = [];
-			product.unitsOfSale.forEach((u) => unitsOfSale.push(u));
-
-			const row = tbody.insertRow();
-			var cellDelete = row.insertCell(0);
-			const deleteRowButton = document.createElement("button");
-			deleteRowButton.textContent = "delete";
-			deleteRowButton.addEventListener("click", () => {
-				var rowIndex = deleteRowButton.parentNode.parentNode;
-				var productId = rowIndex.cells[1].innerText;
-				var unitType = rowIndex.cells[5].innerText;
-				var removableTotal = rowIndex.cells[2].innerText;
-				total -= parseInt(removableTotal);
-				totalPrice.textContent = total;
-				removeFromGlobal(productId, unitType);
-				table.deleteRow(rowIndex.rowIndex);
-			});
-
-			cellDelete.appendChild(deleteRowButton);
-			var cellProductId = row.insertCell(1);
-			cellProductId.textContent = product.productId;
-			var cellTotal = row.insertCell(2);
-
-			var cellCount = row.insertCell(3);
-			const countInput = document.createElement("input");
-			countInput.addEventListener("keyup", (event) => {
-				if (event.key === "Enter") {
-					cellTotal.textContent =
-						parseInt(countInput.value) * parseInt(priceInput.value);
-					itemTotal = parseInt(cellTotal.textContent);
-					if (isNaN(total)) {
-						total = 0;
-					}
-					total += itemTotal;
-					totalPrice.textContent = total;
-					const selectedUnit = unitsOfSale.find(
-						(unit) => unit.name === dropdown.value
-					);
-					if (selectedUnit) {
-						const quantity = selectedUnit.quantity;
-						const unitPrice = selectedUnit.unitPrice;
-
-						if (quantity != 0 && !(parseInt(countInput.value) > quantity)) {
-							if (parseInt(priceInput.value) < unitPrice) {
-								priceInput.value = unitPrice;
-							}
-							total -= itemTotal;
-							cellTotal.textContent =
-								parseInt(countInput.value) * parseInt(priceInput.value);
-							itemTotal = parseInt(cellTotal.textContent);
-							total += itemTotal;
-							totalPrice.textContent = total;
-							updateGlobal(
-								product,
-								selectedUnit,
-								countInput.value,
-								priceInput.value
-							);
-							cellType.textContent = dropdown.value;
-							dropdown.disabled = true;
-							countInput.disabled = true;
-							priceInput.disabled = true;
-						} else {
-							alert("معندكش كفاية");
-						}
-					}
-				}
-			});
-			cellCount.appendChild(countInput);
-
-			var cellPrice = row.insertCell(4);
-			const priceInput = document.createElement("input");
-			priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
-			cellPrice.appendChild(priceInput);
-
-			const cellType = row.insertCell(5);
-			const dropdown = document.createElement("select");
-
-			// Populate dropdown options dynamically
-			unitsOfSale.forEach((unit) => {
-				const option = document.createElement("option");
-				option.value = unit.name;
-				option.textContent = unit.name;
-				dropdown.appendChild(option);
-			});
-
-			dropdown.addEventListener("change", () => {
-				const selectedUnit = unitsOfSale.find(
-					(unit) => unit.name === dropdown.value
-				);
-				if (selectedUnit) {
-					priceInput.value = selectedUnit.salePrice;
-				}
-			});
-
-			cellType.appendChild(dropdown);
-
-			const cellName = row.insertCell(6);
-			cellName.textContent = product.name;
-		})
-
-		.catch((error) => {
-			console.error("Error making Axios request:", error);
-		});
-}
-function updateCustomer(name, customerNumber, moneyRemaining) {
-	axios.put(
-		`https://marketbackend.azurewebsites.net/api/Customer/UpdateCustomer/${customerId}`,
-		{
-			name: name,
-			customerNumber: customerNumber,
-			moneyRemaining: moneyRemaining,
-		}
-	);
-}
-
-function createOrder(customerId, moneyPaid) {
-	axios
-		.post("https://marketbackend.azurewebsites.net/api/Order/CreateOrder", {
-			customerId: customerId,
-			orderItems: GlobalState.orderItems,
-			paymentType: "agel",
-			moneyPaid: moneyPaid,
-			orderNumber: "",
-			taxRate: taxRateInput.value,
-		})
-		.then((response) => {
-			GlobalState.orderItems.length = 0;
-			// Handle success
-			console.log("Response:", response.data);
-		})
-		.catch((error) => {
-			// Handle error
-			console.error("Error:", error);
-		});
-}
-
-payButton.addEventListener("click", () => {
-	let moneyBack = parseInt(paidAmount.value) - parseInt(totalPrice.textContent);
 	if (moneyBack > 0) {
-		moneyRemaining = parseInt(moneyRemaining, 10) - moneyBack;
+		moneyRemaining -= moneyBack;
 		if (moneyRemaining < 0) {
-			alert("Money to give back" + moneyRemaining * -1);
+			alert("Money to give back: " + -moneyRemaining);
 			moneyRemaining = 0;
 		}
 		madyonya.textContent = moneyRemaining;
 	} else {
-		moneyRemaining = parseInt(moneyRemaining, 10) + moneyBack * -1;
+		moneyRemaining += -moneyBack;
 		madyonya.textContent = moneyRemaining;
 	}
 
-	updateCustomer(name, customerNumber, moneyRemaining);
-	createOrder(parseInt(customerId), parseInt(paidAmount.value));
+	updateCustomer(customer.name, customer.customerNumber, moneyRemaining);
+	createOrder(customer.customerId, parseInt(paidAmount.value));
 
+	resetOrder();
+}
+
+function resetOrder() {
 	while (tbody.firstChild) {
 		tbody.removeChild(tbody.firstChild);
 	}
@@ -306,126 +142,162 @@ payButton.addEventListener("click", () => {
 	paidAmount.value = "";
 	itemTotal = 0;
 	total = 0;
-});
+}
 
-// Initialize a variable to store the scanned barcode
-let scannedBarcode = "";
-
-document.addEventListener("keydown", (event) => {
-	// Check if the key pressed is a valid barcode character
+function handleBarcodeInput(event) {
 	if (event.key.length === 1) {
-		// Concatenate the scanned digit to the barcode string
 		scannedBarcode += event.key;
 	} else if (event.key === "Enter") {
-		axios
-			.get(
-				`https://marketbackend.azurewebsites.net/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
-			)
-			.then((response) => {
-				const product = response.data;
-				const unitsOfSale = [];
-				product.unitsOfSale.forEach((u) => unitsOfSale.push(u));
-
-				const row = tbody.insertRow();
-				var cellDelete = row.insertCell(0);
-				const deleteRowButton = document.createElement("button");
-				deleteRowButton.textContent = "delete";
-				deleteRowButton.addEventListener("click", () => {
-					var rowIndex = deleteRowButton.parentNode.parentNode;
-					var productId = rowIndex.cells[1].innerText;
-					var unitType = rowIndex.cells[5].innerText;
-					var removableTotal = rowIndex.cells[2].innerText;
-					total -= parseInt(removableTotal);
-					totalPrice.textContent = total;
-					removeFromGlobal(productId, unitType);
-					table.deleteRow(rowIndex.rowIndex);
-				});
-
-				cellDelete.appendChild(deleteRowButton);
-				var cellProductId = row.insertCell(1);
-				cellProductId.textContent = product.productId;
-				var cellTotal = row.insertCell(2);
-
-				var cellCount = row.insertCell(3);
-				const countInput = document.createElement("input");
-				countInput.addEventListener("keyup", (event) => {
-					if (event.key === "Enter") {
-						cellTotal.textContent =
-							parseInt(countInput.value) * parseInt(priceInput.value);
-						itemTotal = parseInt(cellTotal.textContent);
-						if (isNaN(total)) {
-							total = 0;
-						}
-						total += itemTotal;
-						totalPrice.textContent = total;
-						const selectedUnit = unitsOfSale.find(
-							(unit) => unit.name === dropdown.value
-						);
-						if (selectedUnit) {
-							const quantity = selectedUnit.quantity;
-							const unitPrice = selectedUnit.unitPrice;
-
-							if (quantity != 0 && !(parseInt(countInput.value) > quantity)) {
-								if (parseInt(priceInput.value) < unitPrice) {
-									priceInput.value = unitPrice;
-								}
-								total -= itemTotal;
-								cellTotal.textContent =
-									parseInt(countInput.value) * parseInt(priceInput.value);
-								itemTotal = parseInt(cellTotal.textContent);
-								total += itemTotal;
-								totalPrice.textContent = total;
-								updateGlobal(
-									product,
-									selectedUnit,
-									countInput.value,
-									priceInput.value
-								);
-								cellType.textContent = dropdown.value;
-								dropdown.disabled = true;
-								countInput.disabled = true;
-								priceInput.disabled = true;
-							} else {
-								alert("معندكش كفاية");
-							}
-						}
-					}
-				});
-				cellCount.appendChild(countInput);
-
-				var cellPrice = row.insertCell(4);
-				const priceInput = document.createElement("input");
-				priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
-				cellPrice.appendChild(priceInput);
-
-				const cellType = row.insertCell(5);
-				const dropdown = document.createElement("select");
-
-				// Populate dropdown options dynamically
-				unitsOfSale.forEach((unit) => {
-					const option = document.createElement("option");
-					option.value = unit.name;
-					option.textContent = unit.name;
-					dropdown.appendChild(option);
-				});
-
-				dropdown.addEventListener("change", () => {
-					const selectedUnit = unitsOfSale.find(
-						(unit) => unit.name === dropdown.value
-					);
-					if (selectedUnit) {
-						priceInput.value = selectedUnit.salePrice;
-					}
-				});
-
-				cellType.appendChild(dropdown);
-
-				const cellName = row.insertCell(6);
-				cellName.textContent = product.name;
-			})
-			.catch((error) => {
-				console.error("Error making Axios request:", error);
-			});
+		getProductBySerial(scannedBarcode);
 		scannedBarcode = "";
 	}
-});
+}
+
+function getProduct(query) {
+	axios
+		.get(apiEndpoints.getProductByName(query))
+		.then((response) => addProductToTable(response.data))
+		.catch((error) => console.error("Error fetching product:", error));
+}
+
+function getProductBySerial(serial) {
+	axios
+		.get(apiEndpoints.getProductBySerial(serial))
+		.then((response) => addProductToTable(response.data))
+		.catch((error) =>
+			console.error("Error fetching product by serial:", error)
+		);
+}
+
+function addProductToTable(product) {
+	const row = tbody.insertRow();
+	const unitsOfSale = product.unitsOfSale;
+
+	const deleteCell = row.insertCell(0);
+	const deleteButton = document.createElement("button");
+	deleteButton.textContent = "delete";
+	deleteButton.addEventListener("click", () => {
+		removeProductFromTable(row, product.productId, dropdown.value);
+	});
+	deleteCell.appendChild(deleteButton);
+
+	row.insertCell(1).textContent = product.productId;
+
+	const totalCell = row.insertCell(2);
+	const countInput = document.createElement("input");
+	const priceInput = createPriceInput(unitsOfSale);
+	const dropdown = createUnitDropdown(unitsOfSale, priceInput);
+
+	countInput.addEventListener("keyup", (event) => {
+		if (event.key === "Enter") {
+			const itemTotal = calculateItemTotal(countInput, priceInput);
+			totalCell.textContent = itemTotal;
+			total += itemTotal;
+			totalPrice.textContent = total;
+			const selectedUnit = unitsOfSale.find(
+				(unit) => unit.name === dropdown.value
+			);
+			if (selectedUnit && validateQuantity(selectedUnit, countInput.value)) {
+				updateGlobal(product, selectedUnit, countInput.value, priceInput.value);
+				disableInputs(countInput, priceInput, dropdown);
+			} else {
+				alert("معندكش كفاية");
+			}
+		}
+	});
+
+	row.insertCell(3).appendChild(countInput);
+	row.insertCell(4).appendChild(priceInput);
+	row.insertCell(5).appendChild(dropdown);
+	row.insertCell(6).textContent = product.name;
+}
+
+function createPriceInput(unitsOfSale) {
+	const priceInput = document.createElement("input");
+	priceInput.value = unitsOfSale[0].salePrice;
+	return priceInput;
+}
+
+function createUnitDropdown(unitsOfSale, priceInput) {
+	const dropdown = document.createElement("select");
+	unitsOfSale.forEach((unit) => {
+		const option = document.createElement("option");
+		option.value = unit.name;
+		option.textContent = unit.name;
+		dropdown.appendChild(option);
+	});
+	dropdown.addEventListener("change", () => {
+		const selectedUnit = unitsOfSale.find(
+			(unit) => unit.name === dropdown.value
+		);
+		if (selectedUnit) priceInput.value = selectedUnit.salePrice;
+	});
+	return dropdown;
+}
+
+function calculateItemTotal(countInput, priceInput) {
+	return parseInt(countInput.value) * parseInt(priceInput.value);
+}
+
+function validateQuantity(selectedUnit, count) {
+	return selectedUnit.quantity != 0 && parseInt(count) <= selectedUnit.quantity;
+}
+
+function disableInputs(countInput, priceInput, dropdown) {
+	countInput.disabled = true;
+	priceInput.disabled = true;
+	dropdown.disabled = true;
+}
+
+function removeProductFromTable(row, productId, unitOfSale) {
+	const rowIndex = row.rowIndex;
+	const removableTotal = parseInt(row.cells[2].innerText);
+	total -= removableTotal;
+	totalPrice.textContent = total;
+	table.deleteRow(rowIndex);
+	removeFromGlobal(productId, unitOfSale);
+}
+
+function removeFromGlobal(productId, unitOfSale) {
+	const index = GlobalState.orderItems.findIndex(
+		(item) =>
+			item.productId === parseInt(productId) && item.unitType === unitOfSale
+	);
+	if (index > -1) GlobalState.orderItems.splice(index, 1);
+}
+
+function updateGlobal(product, unitOfSale, count, salePrice) {
+	GlobalState.orderItems.push({
+		productId: product.productId,
+		quantity: parseInt(count),
+		unitType: unitOfSale.name,
+		salePrice: parseInt(salePrice),
+	});
+}
+
+function updateCustomer(name, customerNumber, moneyRemaining) {
+	axios
+		.put(apiEndpoints.updateCustomer(customer.customerId), {
+			name: name,
+			customerNumber: customerNumber,
+			moneyRemaining: moneyRemaining,
+		})
+		.catch((error) => console.error("Error updating customer:", error));
+}
+
+function createOrder(customerId, moneyPaid) {
+	axios
+		.post(apiEndpoints.createOrder, {
+			customerId: customerId,
+			orderItems: GlobalState.orderItems,
+			paymentType: "agel",
+			moneyPaid: moneyPaid,
+			orderNumber: "",
+			taxRate: taxRateInput.value,
+		})
+		.then((response) => {
+			console.log("Order created:", response.data);
+			GlobalState.orderItems.length = 0;
+		})
+		.catch((error) => console.error("Error creating order:", error));
+}

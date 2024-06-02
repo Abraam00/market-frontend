@@ -7,7 +7,7 @@ document.getElementById("backButton").addEventListener("click", () => {
 const tableContainer = document.getElementById("table-container");
 let products;
 let currentPage = 1;
-const productsPerPage = 3;
+const productsPerPage = 10;
 
 axios
 	.get("https://marketbackend.azurewebsites.net/api/Product/GetAllProducts")

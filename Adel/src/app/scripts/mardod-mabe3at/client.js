@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-//getting all product names on page load
+// Getting all product names on page load
 let productNames;
 axios
 	.get(
@@ -16,6 +16,7 @@ axios
 document.getElementById("backButton").addEventListener("click", () => {
 	window.history.back();
 });
+
 // Function to get the query parameter from the URL
 function getQueryParam(param) {
 	const urlParams = new URLSearchParams(window.location.search);
@@ -70,11 +71,7 @@ function updateDropdown() {
 	});
 
 	// Show or hide the dropdown based on the number of filtered items
-	if (filteredItems.length > 0) {
-		dropdownList.style.display = "block";
-	} else {
-		dropdownList.style.display = "none";
-	}
+	dropdownList.style.display = filteredItems.length > 0 ? "block" : "none";
 }
 
 // Close the dropdown when clicking outside the input or list
@@ -94,7 +91,6 @@ const GlobalState = {
 const table = document.querySelector("table");
 const tbody = table.querySelector("tbody");
 const totalPrice = document.getElementById("total");
-const countInput = document.getElementById("countInput");
 const payButton = document.getElementById("payButton");
 const paidAmount = document.getElementById("payInput");
 
@@ -107,7 +103,6 @@ function removeFromGlobal(productId, unitOfSale) {
 	});
 
 	if (index > -1) {
-		// Item with the same productId found, remove it
 		GlobalState.orderItems.splice(index, 1);
 	}
 }
@@ -121,9 +116,11 @@ function updateGlobal(item, unitOfSale, count, salePrice) {
 	};
 	GlobalState.orderItems.push(orderItem);
 }
+
 let itemTotal = 0;
 let total = 0;
-//getting the full product then populating the table using the populate table function based off of the selected unit
+
+// Getting the full product then populating the table using the populate table function based off of the selected unit
 function getProduct(query) {
 	axios
 		.get(
@@ -131,18 +128,17 @@ function getProduct(query) {
 		)
 		.then((response) => {
 			const product = response.data;
-			const unitsOfSale = [];
-			product.unitsOfSale.forEach((u) => unitsOfSale.push(u));
+			const unitsOfSale = product.unitsOfSale;
 
 			const row = tbody.insertRow();
-			var cellDelete = row.insertCell(0);
+			const cellDelete = row.insertCell(0);
 			const deleteRowButton = document.createElement("button");
 			deleteRowButton.textContent = "delete";
 			deleteRowButton.addEventListener("click", () => {
-				var rowIndex = deleteRowButton.parentNode.parentNode;
-				var productId = rowIndex.cells[1].innerText;
-				var unitType = rowIndex.cells[5].innerText;
-				var removableTotal = rowIndex.cells[2].innerText;
+				const rowIndex = deleteRowButton.parentNode.parentNode;
+				const productId = rowIndex.cells[1].innerText;
+				const unitType = rowIndex.cells[5].innerText;
+				const removableTotal = rowIndex.cells[2].innerText;
 				total -= parseInt(removableTotal);
 				totalPrice.textContent = total;
 				removeFromGlobal(productId, unitType);
@@ -150,87 +146,111 @@ function getProduct(query) {
 			});
 
 			cellDelete.appendChild(deleteRowButton);
-			var cellProductId = row.insertCell(1);
+			const cellProductId = row.insertCell(1);
 			cellProductId.textContent = product.productId;
-			var cellTotal = row.insertCell(2);
-
-			var cellCount = row.insertCell(3);
-			const countInput = document.createElement("input");
-			countInput.addEventListener("keyup", (event) => {
-				if (event.key === "Enter") {
-					cellTotal.textContent =
-						parseInt(countInput.value) * parseInt(priceInput.value);
-					itemTotal = parseInt(cellTotal.textContent);
-					if (isNaN(total)) {
-						total = 0;
-					}
-					total += itemTotal;
-					totalPrice.textContent = total;
-					const selectedUnit = unitsOfSale.find(
-						(unit) => unit.name === dropdown.value
-					);
-					if (selectedUnit) {
-						const quantity = selectedUnit.quantity;
-						const unitPrice = selectedUnit.unitPrice;
-
-						if (parseInt(priceInput.value) < unitPrice) {
-							priceInput.value = unitPrice;
-						}
-						total -= itemTotal;
-						cellTotal.textContent =
-							parseInt(countInput.value) * parseInt(priceInput.value);
-						itemTotal = parseInt(cellTotal.textContent);
-						total += itemTotal;
-						totalPrice.textContent = total;
-						updateGlobal(
-							product,
-							selectedUnit,
-							countInput.value,
-							priceInput.value
-						);
-						cellType.textContent = dropdown.value;
-						dropdown.disabled = true;
-						countInput.disabled = true;
-						priceInput.disabled = true;
-					}
-				}
-			});
-			cellCount.appendChild(countInput);
-
-			var cellPrice = row.insertCell(4);
-			const priceInput = document.createElement("input");
-			priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
-			cellPrice.appendChild(priceInput);
-
+			const cellTotal = row.insertCell(2);
+			const cellCount = row.insertCell(3);
+			const cellPrice = row.insertCell(4);
 			const cellType = row.insertCell(5);
-			const dropdown = document.createElement("select");
-
-			// Populate dropdown options dynamically
-			unitsOfSale.forEach((unit) => {
-				const option = document.createElement("option");
-				option.value = unit.name;
-				option.textContent = unit.name;
-				dropdown.appendChild(option);
-			});
-
-			dropdown.addEventListener("change", () => {
-				const selectedUnit = unitsOfSale.find(
-					(unit) => unit.name === dropdown.value
-				);
-				if (selectedUnit) {
-					priceInput.value = selectedUnit.salePrice;
-				}
-			});
-
-			cellType.appendChild(dropdown);
-
 			const cellName = row.insertCell(6);
+
+			const priceInput = createPriceInput(unitsOfSale);
+			const dropdown = createUnitDropdown(unitsOfSale, priceInput);
+			const countInput = createCountInput(
+				row,
+				unitsOfSale,
+				product,
+				cellTotal,
+				dropdown,
+				priceInput,
+				cellType
+			);
+
+			cellCount.appendChild(countInput);
+			cellPrice.appendChild(priceInput);
+			cellType.appendChild(dropdown);
 			cellName.textContent = product.name;
 		})
 		.catch((error) => {
 			console.error("Error making Axios request:", error);
 		});
 }
+
+function createCountInput(
+	row,
+	unitsOfSale,
+	product,
+	cellTotal,
+	dropdown,
+	priceInput,
+	cellType
+) {
+	const countInput = document.createElement("input");
+	countInput.addEventListener("keyup", (event) => {
+		if (event.key === "Enter") {
+			cellTotal.textContent =
+				parseInt(countInput.value) * parseInt(priceInput.value);
+			itemTotal = parseInt(cellTotal.textContent);
+			if (isNaN(total)) {
+				total = 0;
+			}
+			total += itemTotal;
+			totalPrice.textContent = total;
+			const selectedUnit = unitsOfSale.find(
+				(unit) => unit.name === dropdown.value
+			);
+			if (selectedUnit) {
+				const quantity = selectedUnit.quantity;
+				const unitPrice = selectedUnit.unitPrice;
+
+				if (parseInt(priceInput.value) < unitPrice) {
+					priceInput.value = unitPrice;
+				}
+				total -= itemTotal;
+				cellTotal.textContent =
+					parseInt(countInput.value) * parseInt(priceInput.value);
+				itemTotal = parseInt(cellTotal.textContent);
+				total += itemTotal;
+				totalPrice.textContent = total;
+				updateGlobal(product, selectedUnit, countInput.value, priceInput.value);
+				cellType.textContent = dropdown.value;
+				dropdown.disabled = true;
+				countInput.disabled = true;
+				priceInput.disabled = true;
+			}
+		}
+	});
+	return countInput;
+}
+
+function createPriceInput(unitsOfSale) {
+	const priceInput = document.createElement("input");
+	priceInput.value = unitsOfSale[0].salePrice;
+	return priceInput;
+}
+
+function createUnitDropdown(unitsOfSale, priceInput) {
+	const dropdown = document.createElement("select");
+
+	unitsOfSale.forEach((unit) => {
+		const option = document.createElement("option");
+		option.value = unit.name;
+		option.textContent = unit.name;
+		dropdown.appendChild(option);
+	});
+
+	dropdown.addEventListener("change", () => {
+		const selectedUnit = unitsOfSale.find(
+			(unit) => unit.name === dropdown.value
+		);
+		if (selectedUnit) {
+			priceInput.value = selectedUnit.salePrice;
+		}
+	});
+
+	return dropdown;
+}
+
 function updateCustomer(name, customerNumber, moneyRemaining) {
 	axios.put(
 		`https://marketbackend.azurewebsites.net/api/Customer/UpdateCustomer/${customerId}`,
@@ -276,11 +296,9 @@ function returnOrder(orderId) {
 			)
 			.then((response) => {
 				GlobalState.orderItems.length = 0;
-				// Handle success
 				console.log("Response:", response.data);
 			})
 			.catch((error) => {
-				// Handle error
 				console.error("Error:", error);
 			});
 	} else {
@@ -292,11 +310,9 @@ function returnOrder(orderId) {
 			)
 			.then((response) => {
 				GlobalState.orderItems.length = 0;
-				// Handle success
 				console.log("Response:", response.data);
 			})
 			.catch((error) => {
-				// Handle error
 				console.error("Error:", error);
 			});
 	}
@@ -308,28 +324,25 @@ let scannedBarcode = "";
 document.addEventListener("keydown", (event) => {
 	// Check if the key pressed is a valid barcode character
 	if (event.key.length === 1) {
-		// Concatenate the scanned digit to the barcode string
 		scannedBarcode += event.key;
 	} else if (event.key === "Enter") {
-		console.log("j");
 		axios
 			.get(
 				`https://marketbackend.azurewebsites.net/api/Product/GetProductBy?serialNumber=${scannedBarcode}`
 			)
 			.then((response) => {
 				const product = response.data;
-				const unitsOfSale = [];
-				product.unitsOfSale.forEach((u) => unitsOfSale.push(u));
+				const unitsOfSale = product.unitsOfSale;
 
 				const row = tbody.insertRow();
-				var cellDelete = row.insertCell(0);
+				const cellDelete = row.insertCell(0);
 				const deleteRowButton = document.createElement("button");
 				deleteRowButton.textContent = "delete";
 				deleteRowButton.addEventListener("click", () => {
-					var rowIndex = deleteRowButton.parentNode.parentNode;
-					var productId = rowIndex.cells[1].innerText;
-					var unitType = rowIndex.cells[5].innerText;
-					var removableTotal = rowIndex.cells[2].innerText;
+					const rowIndex = deleteRowButton.parentNode.parentNode;
+					const productId = rowIndex.cells[1].innerText;
+					const unitType = rowIndex.cells[5].innerText;
+					const removableTotal = rowIndex.cells[2].innerText;
 					total -= parseInt(removableTotal);
 					totalPrice.textContent = total;
 					removeFromGlobal(productId, unitType);
@@ -337,81 +350,29 @@ document.addEventListener("keydown", (event) => {
 				});
 
 				cellDelete.appendChild(deleteRowButton);
-				var cellProductId = row.insertCell(1);
+				const cellProductId = row.insertCell(1);
 				cellProductId.textContent = product.productId;
-				var cellTotal = row.insertCell(2);
-
-				var cellCount = row.insertCell(3);
-				const countInput = document.createElement("input");
-				countInput.addEventListener("keyup", (event) => {
-					if (event.key === "Enter") {
-						cellTotal.textContent =
-							parseInt(countInput.value) * parseInt(priceInput.value);
-						itemTotal = parseInt(cellTotal.textContent);
-						if (isNaN(total)) {
-							total = 0;
-						}
-						total += itemTotal;
-						totalPrice.textContent = total;
-						const selectedUnit = unitsOfSale.find(
-							(unit) => unit.name === dropdown.value
-						);
-						if (selectedUnit) {
-							const quantity = selectedUnit.quantity;
-							const unitPrice = selectedUnit.unitPrice;
-
-							if (parseInt(priceInput.value) < unitPrice) {
-								priceInput.value = unitPrice;
-							}
-							total -= itemTotal;
-							cellTotal.textContent =
-								parseInt(countInput.value) * parseInt(priceInput.value);
-							itemTotal = parseInt(cellTotal.textContent);
-							total += itemTotal;
-							totalPrice.textContent = total;
-							updateGlobal(
-								product,
-								selectedUnit,
-								countInput.value,
-								priceInput.value
-							);
-							cellType.textContent = dropdown.value;
-							dropdown.disabled = true;
-							countInput.disabled = true;
-							priceInput.disabled = true;
-						}
-					}
-				});
-				cellCount.appendChild(countInput);
-
-				var cellPrice = row.insertCell(4);
-				const priceInput = document.createElement("input");
-				priceInput.value = unitsOfSale[0].salePrice; // Assuming salePrice is available
-				cellPrice.appendChild(priceInput);
-
+				const cellTotal = row.insertCell(2);
+				const cellCount = row.insertCell(3);
+				const cellPrice = row.insertCell(4);
 				const cellType = row.insertCell(5);
-				const dropdown = document.createElement("select");
-
-				// Populate dropdown options dynamically
-				unitsOfSale.forEach((unit) => {
-					const option = document.createElement("option");
-					option.value = unit.name;
-					option.textContent = unit.name;
-					dropdown.appendChild(option);
-				});
-
-				dropdown.addEventListener("change", () => {
-					const selectedUnit = unitsOfSale.find(
-						(unit) => unit.name === dropdown.value
-					);
-					if (selectedUnit) {
-						priceInput.value = selectedUnit.salePrice;
-					}
-				});
-
-				cellType.appendChild(dropdown);
-
 				const cellName = row.insertCell(6);
+
+				const priceInput = createPriceInput(unitsOfSale);
+				const dropdown = createUnitDropdown(unitsOfSale, priceInput);
+				const countInput = createCountInput(
+					row,
+					unitsOfSale,
+					product,
+					cellTotal,
+					dropdown,
+					priceInput,
+					cellType
+				);
+
+				cellCount.appendChild(countInput);
+				cellPrice.appendChild(priceInput);
+				cellType.appendChild(dropdown);
 				cellName.textContent = product.name;
 			})
 			.catch((error) => {
