@@ -1,4 +1,30 @@
-const datepicker = require("js-datepicker");
+// Function to format the date in mm-dd-yyyy
+function formatDate(date) {
+  const d = new Date(date);
+  let month = '' + (d.getMonth() + 1);
+  let day = '' + d.getDate();
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [month, day, year].join('-');
+}
+
+// Initialize date pickers with flatpickr
+flatpickr("#startDate", {
+  dateFormat: "m-d-Y",
+  onChange: function(selectedDates, dateStr, instance) {
+    instance.input.value = formatDate(selectedDates[0]);
+  }
+});
+
+flatpickr("#endDate", {
+  dateFormat: "m-d-Y",
+  onChange: function(selectedDates, dateStr, instance) {
+    instance.input.value = formatDate(selectedDates[0]);
+  }
+});
 
 document.getElementById("backButton").addEventListener("click", () => {
   window.history.back();
