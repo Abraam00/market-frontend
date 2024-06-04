@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>مبيعات عميل</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="../../styles/mabe3at/client.css"
-    />
-  </head>
-  <body>
-    <div id="top">
-      <button id="backButton">ارجع</button>
-      <button id="agelButton">آجل</button>
-    </div>
+	<head>
+		<title>مبيعات عميل</title>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="../../styles/mabe3at/client.css"
+		/>
+	</head>
+	<body>
+		<div id="top">
+			<button id="backButton">ارجع</button>
+			<button id="agelButton">آجل</button>
+		</div>
 
-    <div id="middle">
-      <h1 id="nameHeader"></h1>
-      <div class="dropdown">
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="search..."
-          style="margin-left: 20px"
-        />
-        <ul id="dropdownList"></ul>
-      </div>
-    </div>
-    <div id="tax">
-      <input
-        type="text"
-        id="taxRateInput"
-        value="0.14"
-        style="margin-right: 2%"
-      />
-      <h2 taxRateHeader>:الضريبة المضافة</h2>
-    </div>
-    <table border="1">
-      <thead>
-        <tr>
-          <th>حذف</th>
-          <th>رقم الصنف</th>
-          <th>المجموع</th>
-          <th>العدد</th>
-          <th>السعر</th>
-          <th>الوحدة</th>
-          <th>الاسم</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="bottom">
-      <h2>Total:</h2>
-      <h2 id="total"></h2>
-      <input type="number" id="payInput" step="0.01" placeholder="0.00" />
-      <button id="payButton">Pay</button>
-    </div>
-    <div id="moneyRemaining">
-      <h2 id="madyonya"></h2>
-      <h2>:مديونية قديمة</h2>
-    </div>
-    <script src="../../scripts/mabe3at/client.js"></script>
-  </body>
+		<div id="middle">
+			<h1 id="nameHeader"></h1>
+			<div class="dropdown">
+				<input
+					type="text"
+					id="searchInput"
+					placeholder="search..."
+					style="margin-left: 20px"
+				/>
+				<ul id="dropdownList"></ul>
+			</div>
+		</div>
+		<div id="tax">
+			<input
+				type="text"
+				id="taxRateInput"
+				value="0.14"
+				style="margin-right: 2%"
+			/>
+			<h2 taxRateHeader>:الضريبة المضافة</h2>
+		</div>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>حذف</th>
+					<th>رقم الصنف</th>
+					<th>المجموع</th>
+					<th>العدد</th>
+					<th>السعر</th>
+					<th>الوحدة</th>
+					<th>الاسم</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		<div id="bottom">
+			<h2>Total:</h2>
+			<h2 id="total"></h2>
+			<input type="number" id="payInput" step="0.01" placeholder="0.00" />
+			<button id="payButton">Pay</button>
+		</div>
+		<div id="moneyRemaining">
+			<h2 id="madyonya"></h2>
+			<h2>:مديونية قديمة</h2>
+		</div>
+		<script src="../../scripts/mabe3at/client.js"></script>
+	</body>
 </html>

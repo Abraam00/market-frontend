@@ -107,6 +107,7 @@ axios
 			});
 			createPaginationControls();
 		}
+
 		// Function to create pagination controls
 		function createPaginationControls() {
 			const totalPages = Math.ceil(purchases.length / purchasesPerPage);
@@ -124,23 +125,36 @@ axios
 
 			tableContainer.appendChild(paginationContainer);
 		}
+
+		// Function to format date
+		function formatDate(inputDate) {
+			const dateObject = new Date(inputDate);
+
+			const day = String(dateObject.getDate()).padStart(2, "0");
+			const month = String(dateObject.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+			const year = dateObject.getFullYear();
+
+			const hour = String(dateObject.getHours()).padStart(2, "0");
+			const minute = String(dateObject.getMinutes()).padStart(2, "0");
+
+			const formattedDate = day + "/" + month + "/" + year;
+			const formattedTime = hour + ":" + minute;
+
+			return formattedDate + " " + formattedTime;
+		}
+
+		// Function to print the page
+		function printPage() {
+			window.print();
+		}
+
+		// Add print button
+		const printButton = document.createElement("button");
+		printButton.setAttribute("id", "printButton");
+		printButton.textContent = "Print";
+		printButton.addEventListener("click", printPage);
+		document.body.appendChild(printButton);
 	})
 	.catch((error) => {
 		console.log(error);
 	});
-
-function formatDate(inputDate) {
-	const dateObject = new Date(inputDate);
-
-	const day = String(dateObject.getDate()).padStart(2, "0");
-	const month = String(dateObject.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-	const year = dateObject.getFullYear();
-
-	const hour = String(dateObject.getHours()).padStart(2, "0");
-	const minute = String(dateObject.getMinutes()).padStart(2, "0");
-
-	const formattedDate = day + "/" + month + "/" + year;
-	const formattedTime = hour + ":" + minute;
-
-	return formattedDate + " " + formattedTime;
-}

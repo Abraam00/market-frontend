@@ -46,7 +46,7 @@ axios
 			thUnitPrice.textContent = "السعر";
 			thQuantity.textContent = "العدد";
 			thTotal.textContent = "المجموع";
-			thQuantityAtTime.textContent = "الكمية وقت الشراء";
+			thQuantityAtTime.textContent = "الكمية بعد الشراء";
 
 			trHead.appendChild(thTotal);
 			trHead.appendChild(thQuantityAtTime);

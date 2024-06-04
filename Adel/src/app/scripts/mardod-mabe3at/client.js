@@ -217,6 +217,7 @@ function createCountInput(
 				dropdown.disabled = true;
 				countInput.disabled = true;
 				priceInput.disabled = true;
+				productSearch.value = "";
 			}
 		}
 	});
@@ -297,6 +298,8 @@ function returnOrder(orderId) {
 			.then((response) => {
 				GlobalState.orderItems.length = 0;
 				console.log("Response:", response.data);
+				console.clear();
+				printReceiptWithConfirmation(response.data);
 			})
 			.catch((error) => {
 				console.error("Error:", error);
@@ -311,6 +314,8 @@ function returnOrder(orderId) {
 			.then((response) => {
 				GlobalState.orderItems.length = 0;
 				console.log("Response:", response.data);
+				console.clear();
+				printReceiptWithConfirmation(response.data);
 			})
 			.catch((error) => {
 				console.error("Error:", error);
@@ -381,3 +386,79 @@ document.addEventListener("keydown", (event) => {
 		scannedBarcode = "";
 	}
 });
+function printReceiptWithConfirmation(orderData) {
+	const printConfirmation = window.confirm("عايز تطبع فاتورة؟");
+	if (printConfirmation) {
+		printReceipt(orderData);
+	}
+}
+
+function printReceipt(orderData) {
+	const receiptWindow = window.open("", "_blank");
+
+	const receiptContent = `
+        <html>
+            <head>
+                <title>Receipt</title>
+                <style>
+                    /* Add your receipt styles here */
+                    body {
+                        font-family: Arial, sans-serif;
+                        padding: 20px;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    th, td {
+                        border: 1px solid #000;
+                        padding: 8px;
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>Receipt</h2>
+                <p>Order Number: ${orderData.orderId}</p>
+                <p>Date: ${new Date().toLocaleString()}</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Unit Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orderData.orderItems
+													.map(
+														(item) => `
+                            <tr>
+                                <td>${item.productName}</td>
+                                <td>${item.priceAfterTax}</td>
+                                <td>${item.quantity}</td>
+                                <td>${item.priceAfterTax * item.quantity}</td>
+                            </tr>
+                        `
+													)
+													.join("")}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">Tax (${orderData.taxRate}%)</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">Total</td>
+                            <td>${orderData.total}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </body>
+        </html>
+    `;
+
+	receiptWindow.document.write(receiptContent);
+	receiptWindow.document.close();
+	receiptWindow.print();
+}

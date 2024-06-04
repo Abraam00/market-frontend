@@ -1,98 +1,109 @@
-#backButton {
-    background-color: rgb(19, 158, 205); /* Light blue background color */
-    color: white; /* White text color */
-    padding: 10px 20px; /* Padding to make the button bigger */
-    border: none; /* Remove button border */
-    cursor: pointer; /* Change cursor to a hand when hovering */
-    margin-bottom: 10px;
-    width: 100px;
-    height: 60px;
-    font-size: larger;
-  }
-
-  /* CSS for button hover effect (optional) */
-  #backButton:hover {
-    background-color: blue; /* Darker blue background color on hover */
-  }
-
-
-/* Center the table in the viewport */
-table {
-  width: 100%; /* Adjust the width as needed */
-  border-collapse: collapse;
-  background-color: #fff; /* Set a background color for the table if desired */
-  margin-bottom: 20px;
-  margin-top: 40px;
-}
-
-/* Style the table header row */
-table th {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
-}
-
-/* Style the table data rows */
-table td {
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ccc; /* Add a border for each cell if desired */
-}
-
-/* Add some spacing between table rows */
-table tr {
-  border-bottom: 1px solid #ccc;
-}
-
-/* Highlight the last row as an example */
-table tbody tr:last-child {
-  background-color: #f0f0f0; /* Set a background color for the last row if desired */
-}
-
-/* Style for hover effect on rows */
-table tbody tr:hover {
-  background-color: #e0e0e0;
-}
-
-#middle{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 40px;
-}
-
-#searchInput{
-  width: 300px;
-  height: 40px;
-}
-
-#bottom{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 40px;
-}
-
-#total{
-  margin-right: 50px;
-}
-
-#payButton{
+/* General Button Styles */
+button {
   background-color: rgb(19, 158, 205); /* Light blue background color */
   color: white; /* White text color */
   padding: 10px 20px; /* Padding to make the button bigger */
   border: none; /* Remove button border */
   cursor: pointer; /* Change cursor to a hand when hovering */
+  font-size: 1.2em; /* Increased font size */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
   margin-bottom: 10px;
+  width: 120px; /* Adjusted width */
+  height: 50px; /* Adjusted height */
+}
+
+button:hover {
+  background-color: rgb(17, 140, 180); /* Slightly darker blue background color on hover */
+}
+
+/* Specific Button Styles */
+#backButton {
+  margin-bottom: 10px;
+}
+
+#payButton, #agelButton, #unitButton {
   width: 100px;
   height: 60px;
   font-size: larger;
-}
-#payButton:hover {
-  background-color: blue; /* Darker blue background color on hover */
+  margin-left: 40px;
 }
 
-#payInput{
+#agelButton {
+  margin-left: 80%;
+}
+
+/* Table Styles */
+table {
+  width: 100%; /* Full width */
+  border-collapse: collapse;
+  background-color: #fff; /* White background */
+  margin: 20px 0; /* Vertical margin */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+table th {
+  background-color: #333; /* Dark background */
+  color: #fff; /* White text */
+  padding: 10px; /* Padding */
+  text-transform: uppercase; /* Uppercase text */
+  letter-spacing: 1px; /* Spacing between letters */
+}
+
+table td {
+  padding: 10px; /* Padding */
+  text-align: center; /* Centered text */
+  border: 1px solid #ddd; /* Light border */
+  font-size: 0.95em; /* Slightly smaller text */
+}
+
+table tr {
+  border-bottom: 1px solid #ddd; /* Light border between rows */
+}
+
+table tbody tr:last-child {
+  background-color: #f9f9f9; /* Light grey background for the last row */
+}
+
+table tbody tr:hover {
+  background-color: #f1f1f1; /* Slightly darker grey on hover */
+}
+
+/* Layout Styles */
+#middle, #bottom, #tax {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+#top {
+  display: flex;
+  align-items: left;
+  justify-content: left;
+}
+
+#total {
+  margin-right: 50px;
+}
+
+/* Search and Input Styles */
+#searchInput, #payInput {
+  width: 300px;
+  height: 40px;
+  font-size: 1em; /* Font size */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px; /* Padding inside the input */
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+  transition: border-color 0.3s ease; /* Smooth transition for focus */
+}
+
+#searchInput {
+  width: 300px;
+}
+
+#payInput {
   width: 100px;
   height: 60px;
   margin-right: 20px;
@@ -100,26 +111,12 @@ table tbody tr:hover {
   padding: 10px 20px;
 }
 
-#top{
-  display: flex;
-  align-items: left;
-  justify-content: left;
+#searchInput:focus, #payInput:focus {
+  border-color: rgb(19, 158, 205); /* Change border color on focus */
+  outline: none; /* Remove default outline */
 }
-#agelButton{
-  background-color: rgb(19, 158, 205); /* Light blue background color */
-  color: white; /* White text color */
-  padding: 10px 20px; /* Padding to make the button bigger */
-  border: none; /* Remove button border */
-  cursor: pointer; /* Change cursor to a hand when hovering */
-  margin-bottom: 10px;
-  width: 100px;
-  height: 60px;
-  font-size: larger;
-  margin-left: 80%;
-}
-#agelButton:hover {
-  background-color: blue; /* Darker blue background color on hover */
-}
+
+/* Dropdown Styles */
 #dropdownList {
   list-style-type: none;
   margin: 0;
@@ -128,9 +125,9 @@ table tbody tr:hover {
   width: 100%;
   max-height: 60px; /* Set a maximum height for the dropdown */
   overflow-y: auto; /* Enable vertical scrollbar if needed */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ccc;
-  display: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border: 1px solid #ccc; /* Light border */
+  display: none; /* Hidden by default */
   z-index: 1; /* Ensure the dropdown is above other elements */
 }
 
@@ -140,31 +137,10 @@ table tbody tr:hover {
 }
 
 #dropdownList li:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f0; /* Light grey background on hover */
 }
+
 .dropdown {
   position: relative;
   display: inline-block;
-}
-#unitButton{
-  background-color: rgb(19, 158, 205); /* Light blue background color */
-  color: white; /* White text color */
-  padding: 10px 20px; /* Padding to make the button bigger */
-  border: none; /* Remove button border */
-  cursor: pointer; /* Change cursor to a hand when hovering */
-  margin-bottom: 10px;
-  width: 100px;
-  height: 60px;
-  font-size: larger;
-  margin-left: 40px;
-}
-#unitButton:hover {
-  background-color: blue; /* Darker blue background color on hover */
-}
-
-#tax{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 40px;
 }

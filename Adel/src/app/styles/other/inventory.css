@@ -1,59 +1,109 @@
 #backButton {
-    background-color: rgb(19, 158, 205); /* Light blue background color */
-    color: white; /* White text color */
-    padding: 10px 20px; /* Padding to make the button bigger */
-    border: none; /* Remove button border */
-    cursor: pointer; /* Change cursor to a hand when hovering */
-    margin-bottom: 10px;
-    width: 100px;
-    height: 60px;
-    font-size: larger;
-  }
-  
-  /* CSS for button hover effect (optional) */
-  #backButton:hover {
-    background-color: blue; /* Darker blue background color on hover */
-  }
-  table {
-    width: 100%; /* Adjust the width as needed */
-    border-collapse: collapse;
-    background-color: #fff; /* Set a background color for the table if desired */
-    margin-bottom: 40px;
-    margin-top: 20px;
-  }
-  
-  /* Style the table header row */
-  table th {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-  }
-  
-  /* Style the table data rows */
-  table td {
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ccc; /* Add a border for each cell if desired */
-  }
-  
-  /* Add some spacing between table rows */
-  table tr {
-    border-bottom: 1px solid #ccc;
-  }
-  
-  /* Highlight the last row as an example */
-  table tbody tr:last-child {
-    background-color: #f0f0f0; /* Set a background color for the last row if desired */
-  }
-  
-  /* Style for hover effect on rows */
-  table tbody tr:hover {
-    background-color: #e0e0e0;
-  }
+  background-color: rgb(19, 158, 205); /* Light blue background color */
+  color: white; /* White text color */
+  padding: 10px 20px; /* Padding to make the button bigger */
+  border: none; /* Remove button border */
+  cursor: pointer; /* Change cursor to a hand when hovering */
+  margin-bottom: 10px;
+  width: 120px; /* Adjusted width */
+  height: 50px; /* Adjusted height */
+  font-size: 1.2em; /* Increased font size */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
 
-  #labels{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    }
+/* CSS for button hover effect */
+#backButton:hover {
+  background-color: rgb(17, 140, 180); /* Slightly darker blue background color on hover */
+}
+
+table {
+  width: 100%; /* Full width */
+  border-collapse: collapse;
+  background-color: #fff; /* White background */
+  margin: 20px 0; /* Vertical margin */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Style the table header row */
+table th {
+  background-color: #333; /* Dark background */
+  color: #fff; /* White text */
+  padding: 10px; /* Padding */
+  text-transform: uppercase; /* Uppercase text */
+  letter-spacing: 1px; /* Spacing between letters */
+}
+
+/* Style the table data rows */
+table td {
+  padding: 10px; /* Padding */
+  text-align: center; /* Centered text */
+  border: 1px solid #ddd; /* Light border */
+  font-size: 0.95em; /* Slightly smaller text */
+}
+
+/* Add some spacing between table rows */
+table tr {
+  border-bottom: 1px solid #ddd; /* Light border between rows */
+}
+
+/* Highlight the last row */
+table tbody tr:last-child {
+  background-color: #f9f9f9; /* Light grey background for the last row */
+}
+
+/* Style for hover effect on rows */
+table tbody tr:hover {
+  background-color: #f1f1f1; /* Slightly darker grey on hover */
+}
+
+#labels {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+#searchBar {
+  display: block;
+  margin: 0 auto 20px auto; /* Center horizontally and add bottom margin */
+  padding: 10px; /* Padding inside the input */
+  width: 300px; /* Fixed width */
+  height: 40px; /* Fixed height */
+  font-size: 1em; /* Font size */
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 5px; /* Rounded corners */
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+  transition: border-color 0.3s ease; /* Smooth transition for focus */
+}
+
+#searchBar:focus {
+  border-color: rgb(19, 158, 205); /* Change border color on focus */
+  outline: none; /* Remove default outline */
+}
+
+/* Additional pagination styles */
+#pageNumber {
+  text-align: center; /* Centered text */
+  margin: 20px 0; /* Vertical margin */
+}
+
+#pageNumber button {
+  background-color: #333; /* Dark background */
+  color: #fff; /* White text */
+  border: none; /* No border */
+  padding: 10px 15px; /* Padding */
+  margin: 0 5px; /* Horizontal margin */
+  cursor: pointer; /* Pointer cursor */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for hover */
+}
+
+#pageNumber button:hover {
+  background-color: rgb(17, 140, 180); /* Slightly lighter background on hover */
+}
+
+#pageNumber button.active {
+  background-color: rgb(19, 158, 205); /* Active button color */
+  font-weight: bold; /* Bold text for active button */
+}

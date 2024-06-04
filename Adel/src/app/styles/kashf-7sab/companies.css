@@ -5,16 +5,17 @@
   border: none; /* Remove button border */
   cursor: pointer; /* Change cursor to a hand when hovering */
   margin-bottom: 10px;
-  width: 100px;
-  height: 60px;
-  font-size: larger;
+  width: 120px; /* Adjusted width */
+  height: 50px; /* Adjusted height */
+  font-size: 1.2em; /* Increased font size */
+  border-radius: 5px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
-/* CSS for button hover effect (optional) */
+/* CSS for button hover effect */
 #backButton:hover {
-  background-color: blue; /* Darker blue background color on hover */
+  background-color: rgb(17, 140, 180); /* Slightly darker blue background color on hover */
 }
-
 
   /* CSS for the big buttons */
   .button-container {

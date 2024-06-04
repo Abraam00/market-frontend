@@ -238,6 +238,7 @@ function returnPurchase(purchaseId) {
 			GlobalState.orderItems.length = 0;
 			// Handle success
 			console.log("Response:", response.data);
+			console.clear();
 		})
 		.catch((error) => {
 			// Handle error
@@ -333,6 +334,7 @@ document.addEventListener("keydown", (event) => {
 							dropdown.disabled = true;
 							countInput.disabled = true;
 							priceInput.disabled = true;
+							productSearch.value = "";
 						}
 					}
 				});
