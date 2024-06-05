@@ -15,6 +15,9 @@ const startDate = getQueryParam("startDate");
 const endDate = getQueryParam("endDate");
 const tableContainer = document.getElementById("table-container");
 let purchases;
+let filteredPurchases;
+const purchasesPerPage = 10;
+let currentPage = 1;
 
 axios
 	.get(
@@ -22,84 +25,118 @@ axios
 	)
 	.then((response) => {
 		purchases = response.data;
-		const purchasesWithUnitType = purchases.filter((purchase) =>
+		filteredPurchases = purchases.filter((purchase) =>
 			purchase.purchaseItems.some(
 				(item) => String(item.unitType).toLowerCase() === unitType.toLowerCase()
 			)
 		);
-		purchasesWithUnitType.forEach((purchase) => {
-			const table = document.createElement("table");
-			table.setAttribute("border", "1");
-
-			const thead = document.createElement("thead");
-			const trHead = document.createElement("tr");
-			const thName = document.createElement("th");
-			const thUnitType = document.createElement("th");
-			const thUnitPrice = document.createElement("th");
-			const thQuantity = document.createElement("th");
-			const thTotal = document.createElement("th");
-			const thDate = document.createElement("th");
-			const thQuantityAtTime = document.createElement("th");
-			thName.textContent = "الاسم";
-			thDate.textContent = "التاريخ";
-			thUnitType.textContent = "الوحدة";
-			thUnitPrice.textContent = "السعر";
-			thQuantity.textContent = "العدد";
-			thTotal.textContent = "المجموع";
-			thQuantityAtTime.textContent = "الكمية بعد الشراء";
-
-			trHead.appendChild(thTotal);
-			trHead.appendChild(thQuantityAtTime);
-			trHead.appendChild(thQuantity);
-			trHead.appendChild(thUnitPrice);
-			trHead.appendChild(thUnitType);
-			trHead.appendChild(thDate);
-			trHead.appendChild(thName);
-			thead.appendChild(trHead);
-			table.appendChild(thead);
-			const tbody = document.createElement("tbody");
-
-			// Iterate over order properties to create table cells
-			purchase.purchaseItems.forEach((item) => {
-				const trBody = document.createElement("tr");
-				const tdName = document.createElement("td");
-				const tdDate = document.createElement("td");
-				const tdUnitType = document.createElement("td");
-				const tdUnitPrice = document.createElement("td");
-				const tdQuantity = document.createElement("td");
-				const tdQuantityAtTime = document.createElement("td");
-				const tdTotal = document.createElement("td");
-				tdName.textContent = item.productName;
-				tdDate.textContent = formatDate(purchase.purchaseDate);
-				tdUnitType.textContent = item.unitType;
-				tdUnitPrice.textContent = item.unitPrice;
-				tdQuantity.textContent = item.quantity;
-				tdQuantityAtTime.textContent = item.quantitySnapShot;
-				tdTotal.textContent = item.quantity * item.unitPrice;
-
-				trBody.appendChild(tdTotal);
-				trBody.appendChild(tdQuantityAtTime);
-				trBody.appendChild(tdQuantity);
-				trBody.appendChild(tdUnitPrice);
-				trBody.appendChild(tdUnitType);
-				trBody.appendChild(tdDate);
-				trBody.appendChild(tdName);
-				tbody.appendChild(trBody);
-			});
-
-			table.appendChild(tbody);
-			if (purchase.companyName != null) {
-				const nameLabel = document.createElement("h2");
-				nameLabel.textContent = purchase.companyName;
-				nameLabel.id = "labels";
-				tableContainer.appendChild(nameLabel);
-			}
-			tableContainer.appendChild(table);
-		});
+		renderTable(currentPage);
 	})
 	.catch((error) => {
 		console.error("Error fetching data:", error);
 	});
+
+function renderTable(page) {
+	const start = (page - 1) * purchasesPerPage;
+	const end = start + purchasesPerPage;
+	const paginatedPurchases = filteredPurchases.slice(start, end);
+
+	tableContainer.innerHTML = ""; // Clear previous content
+
+	paginatedPurchases.forEach((purchase) => {
+		const table = document.createElement("table");
+		table.setAttribute("border", "1");
+
+		const thead = document.createElement("thead");
+		const trHead = document.createElement("tr");
+		const thName = document.createElement("th");
+		const thUnitType = document.createElement("th");
+		const thUnitPrice = document.createElement("th");
+		const thQuantity = document.createElement("th");
+		const thTotal = document.createElement("th");
+		const thDate = document.createElement("th");
+		const thQuantityAtTime = document.createElement("th");
+		thName.textContent = "الاسم";
+		thDate.textContent = "التاريخ";
+		thUnitType.textContent = "الوحدة";
+		thUnitPrice.textContent = "السعر";
+		thQuantity.textContent = "العدد";
+		thTotal.textContent = "المجموع";
+		thQuantityAtTime.textContent = "الكمية بعد الشراء";
+
+		trHead.appendChild(thTotal);
+		trHead.appendChild(thQuantityAtTime);
+		trHead.appendChild(thQuantity);
+		trHead.appendChild(thUnitPrice);
+		trHead.appendChild(thUnitType);
+		trHead.appendChild(thDate);
+		trHead.appendChild(thName);
+		thead.appendChild(trHead);
+		table.appendChild(thead);
+		const tbody = document.createElement("tbody");
+
+		// Iterate over purchase properties to create table cells
+		purchase.purchaseItems.forEach((item) => {
+			const trBody = document.createElement("tr");
+			const tdName = document.createElement("td");
+			const tdDate = document.createElement("td");
+			const tdUnitType = document.createElement("td");
+			const tdUnitPrice = document.createElement("td");
+			const tdQuantity = document.createElement("td");
+			const tdQuantityAtTime = document.createElement("td");
+			const tdTotal = document.createElement("td");
+			tdName.textContent = item.productName;
+			tdDate.textContent = formatDate(purchase.purchaseDate);
+			tdUnitType.textContent = item.unitType;
+			tdUnitPrice.textContent = item.unitPrice;
+			tdQuantity.textContent = item.quantity;
+			tdQuantityAtTime.textContent = item.quantitySnapShot;
+			tdTotal.textContent = item.quantity * item.unitPrice;
+
+			trBody.appendChild(tdTotal);
+			trBody.appendChild(tdQuantityAtTime);
+			trBody.appendChild(tdQuantity);
+			trBody.appendChild(tdUnitPrice);
+			trBody.appendChild(tdUnitType);
+			trBody.appendChild(tdDate);
+			trBody.appendChild(tdName);
+			tbody.appendChild(trBody);
+		});
+
+		table.appendChild(tbody);
+		if (purchase.companyName != null) {
+			const nameLabel = document.createElement("h2");
+			nameLabel.textContent = purchase.companyName;
+			nameLabel.id = "labels";
+			tableContainer.appendChild(nameLabel);
+		}
+		tableContainer.appendChild(table);
+	});
+
+	// Update pagination controls
+	document.getElementById(
+		"pageInfo"
+	).textContent = `Page ${page} of ${Math.ceil(
+		filteredPurchases.length / purchasesPerPage
+	)}`;
+	document.getElementById("prevPage").disabled = page === 1;
+	document.getElementById("nextPage").disabled =
+		page === Math.ceil(filteredPurchases.length / purchasesPerPage);
+}
+
+document.getElementById("prevPage").addEventListener("click", () => {
+	if (currentPage > 1) {
+		currentPage--;
+		renderTable(currentPage);
+	}
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+	if (currentPage < Math.ceil(filteredPurchases.length / purchasesPerPage)) {
+		currentPage++;
+		renderTable(currentPage);
+	}
+});
 
 function formatDate(inputDate) {
 	const dateObject = new Date(inputDate);

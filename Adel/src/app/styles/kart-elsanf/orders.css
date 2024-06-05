@@ -59,3 +59,32 @@
     justify-content: center;
     margin-bottom: 10px;
     }
+
+/* Pagination Controls */
+#pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 20px;
+}
+
+#pagination button {
+	background-color: rgb(19, 158, 205); /* Light blue background color */
+	color: white; /* White text color */
+	padding: 10px 20px; /* Padding to make the button bigger */
+	border: none; /* Remove button border */
+	cursor: pointer; /* Change cursor to a hand when hovering */
+	margin: 0 10px;
+	font-size: 1em; /* Font size */
+	border-radius: 5px; /* Rounded corners */
+	transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+#pagination button:hover {
+	background-color: rgb(17, 140, 180); /* Slightly darker blue background color on hover */
+}
+
+#pageInfo {
+	font-size: 1.2em; /* Increase font size */
+	margin: 0 10px;
+}
