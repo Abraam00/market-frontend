@@ -284,15 +284,15 @@ function printReceipt(orderData) {
             </head>
             <body>
                 <h2>Receipt</h2>
-                <p>Order Number: ${orderData.orderId}</p>
-                <p>Date: ${new Date().toLocaleString()}</p>
+                <p>${orderData.orderId}  :رقم العملية</p>
+                <p>${new Date().toLocaleString()}  :التاريخ</p>
                 <table>
                     <thead>
                         <tr>
-                            <th>Product</th>
-                            <th>Unit Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
+                            <th>اسم الصنف</th>
+                            <th>السعر</th>
+                            <th>الكمية</th>
+                            <th>المجموع</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -311,11 +311,13 @@ function printReceipt(orderData) {
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3">Tax (${orderData.taxRate}%)</td>
+                            <td colspan="3">%(${
+															orderData.taxRate
+														}) :الضريبة المضافة</td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td colspan="3">Total</td>
+                            <td colspan="3">الاجمالي</td>
                             <td>${orderData.total}</td>
                         </tr>
                     </tfoot>

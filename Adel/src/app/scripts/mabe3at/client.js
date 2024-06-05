@@ -315,66 +315,66 @@ function printReceipt(orderData) {
 	const receiptWindow = window.open("", "_blank");
 
 	const receiptContent = `
-        <html>
-            <head>
-                <title>Receipt</title>
-                <style>
-                    /* Add your receipt styles here */
-                    body {
-                        font-family: Arial, sans-serif;
-                        padding: 20px;
-                    }
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                    }
-                    th, td {
-                        border: 1px solid #000;
-                        padding: 8px;
-                    }
-                </style>
-            </head>
-            <body>
-                <h2>Receipt</h2>
-                <p>Order Number: ${orderData.orderId}</p>
-                <p>Date: ${new Date().toLocaleString()}</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Unit Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${orderData.orderItems
-													.map(
-														(item) => `
-                            <tr>
-                                <td>${item.productName}</td>
-                                <td>${item.priceAfterTax}</td>
-                                <td>${item.quantity}</td>
-                                <td>${item.priceAfterTax * item.quantity}</td>
-                            </tr>
-                        `
-													)
-													.join("")}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3">Tax (${orderData.taxRate}%)</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">Total</td>
-                            <td>${orderData.total}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </body>
-        </html>
-    `;
+	<html>
+	<head>
+		<title>Receipt</title>
+		<style>
+			/* Add your receipt styles here */
+			body {
+				font-family: Arial, sans-serif;
+				padding: 20px;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+			}
+			th, td {
+				border: 1px solid #000;
+				padding: 8px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Receipt</h2>
+		<p>${orderData.orderId}  :رقم العملية</p>
+		<p>${new Date().toLocaleString()}  :التاريخ</p>
+		<table>
+			<thead>
+				<tr>
+					<th>اسم الصنف</th>
+					<th>السعر</th>
+					<th>الكمية</th>
+					<th>المجموع</th>
+				</tr>
+			</thead>
+			<tbody>
+				${orderData.orderItems
+					.map(
+						(item) => `
+					<tr>
+						<td>${item.productName}</td>
+						<td>${item.priceAfterTax}</td>
+						<td>${item.quantity}</td>
+						<td>${item.priceAfterTax * item.quantity}</td>
+					</tr>
+				`
+					)
+					.join("")}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="3">%(${orderData.taxRate}) :الضريبة المضافة</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td colspan="3">الاجمالي</td>
+					<td>${orderData.total}</td>
+				</tr>
+			</tfoot>
+		</table>
+	</body>
+</html>
+`;
 
 	receiptWindow.document.write(receiptContent);
 	receiptWindow.document.close();

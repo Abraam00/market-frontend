@@ -23,7 +23,7 @@ axios
 			const filteredCustomers = customers.filter(
 				(customer) =>
 					customer.name.toLowerCase().includes(searchTerm) ||
-					customer.customerId.toLowerCase().includes(searchTerm)
+					customer.customerId == searchTerm
 			);
 			renderButtons(filteredCustomers);
 		});

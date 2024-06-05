@@ -22,7 +22,7 @@ axios
 			const filteredCompanies = companies.filter(
 				(company) =>
 					company.companyName.toLowerCase().includes(searchTerm) ||
-					company.companyId.toLowerCase().includes(searchTerm)
+					company.companyId == searchTerm
 			);
 			renderButtons(filteredCompanies);
 		});
