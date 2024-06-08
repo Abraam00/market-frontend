@@ -46,8 +46,6 @@ agelButton.addEventListener(
 document.addEventListener("keydown", handleBarcodeInput);
 
 function initializePage() {
-	nameHeader.textContent = "اسم العامل: " + "جلجل";
-
 	axios
 		.get(apiEndpoints.getAllProductNames)
 		.then((response) => (productNames = response.data))

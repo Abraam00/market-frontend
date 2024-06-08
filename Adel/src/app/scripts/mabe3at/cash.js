@@ -35,7 +35,6 @@ document
 document
 	.getElementById("agelButton")
 	.addEventListener("click", () => (window.location.href = "agel.html"));
-document.getElementById("nameHeader").textContent = "اسم العامل: " + "جلجل";
 
 productSearch.addEventListener("input", updateDropdown);
 document.addEventListener("click", closeDropdownOnClickOutside);
